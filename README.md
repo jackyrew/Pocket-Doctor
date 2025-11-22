@@ -11,8 +11,8 @@ Group Name: United
 |-----|--------------------------|-------------|--------------------------------------|
 | 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX |
 | 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX & Frontend Development, Backend Integration |         |
-| 3   | _[Member 3 Name]_        | _[xxxxxxx]_ | Authentication & Storage Integration |
-| 4   | _[Member 4 Name]_        | _[xxxxxxx]_ | Testing, Documentation & Deployment  |
+| 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 | Authentication & Storage Integration |
+| 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Testing, Documentation & Deployment  |
 
 ## 2. Project Initiation & Ideation
 
