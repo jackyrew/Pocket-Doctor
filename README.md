@@ -44,14 +44,13 @@ The main objectives of **PocketDoctor** are:
 
 - **Primary Users:** General public (teenagers to adults) who want quick, trustworthy symptom guidance.  
 - **Secondary Users:**  
-  - Patients preparing for clinic visits  
-  - Caregivers (e.g. parents) who want structured information before talking to a doctor  
+  - Patients preparing for clinic visits
 
 ### 2.5 Preferred Platform
 
-- **Mobile Platform:** Android (Flutter)  
+- **Mobile Platform:** Android & iOS(Flutter)  
 - **Framework:** Flutter (Dart)  
-- **Back End as a Service (BaaS):** Firebase or Appwrite.io (for authentication & storage)
+- **Back End as a Service (BaaS):** Firebase(for authentication & storage)
 
 ### 2.6 Key Features & Functionalities
 
@@ -67,20 +66,15 @@ Planned core features:
    - Calls to a health/symptom API or custom logic to generate preliminary suggestions
    - Clear disclaimer that results are not a diagnosis
 
-3. **Health Record Storage**
-   - Store previous symptom checks
-   - View history of symptom sessions
-   - Store information securely in cloud database (Firebase Firestore / Realtime DB / Appwrite collection)
-
-4. **Medicine / Reminder Module (Optional Feature)**
+3. **Medicine / Reminder Module**
    - Users can set reminders for medication or follow-up
    - Local notifications from the device
 
-5. **Profile Screen**
+4. **Profile Screen**
    - View basic profile details
    - Manage personal settings and preferences
 
-6. **General App Features**
+5. **General App Features**
    - Responsive layout for common phone sizes
    - Dark/light mode support (optional)
    - Error handling and input validation on forms
@@ -92,11 +86,11 @@ Planned core features:
 ### 3.1 Tech Stack
 
 - **Frontend:** Flutter (Dart)
-- **Backend / BaaS:** Firebase or Appwrite.io  
+- **Backend / BaaS:** Firebase
   - Authentication
   - Cloud database for CRUD (symptom history, user settings, etc.)
 - **Packages / Plugins (Examples)**
-  - `firebase_auth` / `appwrite` client
+  - `firebase_auth` client
   - `cloud_firestore` / database plugin
   - `http` for API calls (e.g. symptom/health APIs)
   - `provider`, `riverpod`, or `bloc` for state management
@@ -109,7 +103,7 @@ Planned core features:
   - State management for user session and symptom flows  
   - Controllers/services for API calls and CRUD operations  
 - **Data Layer:**  
-  - BaaS Authentication (Firebase/Auth or Appwrite)  
+  - BaaS Authentication (Firebase/Auth)  
   - Cloud database collections for users & symptom sessions  
 
 ---
@@ -118,8 +112,8 @@ Planned core features:
 
 ### 4.1 Technical Feasibility & Back-End Assessment
 
-- App will run on **Android smartphones** using Flutter’s rendering engine.
-- BaaS (Firebase/Appwrite) supports:
+- App will run on **Android & iOS smartphones** using Flutter’s rendering engine.
+- BaaS (Firebase) supports:
   - Authentication: email/password
   - Real-time or document-based storage (symptom history, user records)
 - CRUD Operations:
@@ -130,7 +124,7 @@ Planned core features:
 
 Compatibility considerations:
 
-- Designed for current Android versions used by students (e.g. Android 10+).  
+- Designed for current Android & iOS versions used by students (e.g. Android 10+).  
 - Network access required for authentication & API calls.  
 - Some limited offline functionality can be considered (e.g. local cache of last results).
 
@@ -146,9 +140,9 @@ Splash Screen
       |
       v
    Home Screen
-   /   |     \
-  /    |      \
-Symptom Checker   History Screen   Profile Screen
+     |     \
+     |      \
+Symptom Checker    Profile Screen
        |
        v
   Result / Summary Screen
