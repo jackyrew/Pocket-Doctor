@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "173959701132",
+    "project_id": "pocket-doctor-b5458",
+    "storage_bucket": "pocket-doctor-b5458.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173959701132:android:26f6c08a677ac6a58111a9",
+        "android_client_info": {
+          "package_name": "com.IA.PocketDoctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoK4HX46UrhyWgAg2W_RXSvsUV3lWtbN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
