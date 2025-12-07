@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:173959701132:android:26f6c08a677ac6a58111a9",
+        "mobilesdk_app_id": "1:173959701132:android:293c887dd0cfde498111a9",
         "android_client_info": {
-          "package_name": "com.IA.PocketDoctor"
+          "package_name": "com.example.pocket_doctor"
         }
       },
       "oauth_client": [],
