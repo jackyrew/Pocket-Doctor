@@ -4,7 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'home_new_user.dart';
-import 'home_existing_user.dart';
+import 'nav_wrapper.dart';
 
 class LogicPage extends StatefulWidget {
   const LogicPage({super.key});
@@ -14,15 +14,19 @@ class LogicPage extends StatefulWidget {
 }
 
 class _LogicPageState extends State<LogicPage> {
-  final db = FirebaseDatabase.instanceFor(
-    app: Firebase.app("PocketDoctor"),
-    databaseURL:
-        "https://pocket-doctor-b5458-default-rtdb.asia-southeast1.firebasedatabase.app",
-  ).ref();
+  late final DatabaseReference db;
 
   @override
   void initState() {
     super.initState();
+
+    // connect to the correct database (asia-southeast1)
+    db = FirebaseDatabase.instanceFor(
+      app: Firebase.app("PocketDoctor"),
+      databaseURL:
+          "https://pocket-doctor-b5458-default-rtdb.asia-southeast1.firebasedatabase.app",
+    ).ref();
+
     _checkUserStatus();
   }
 
@@ -33,29 +37,59 @@ class _LogicPageState extends State<LogicPage> {
 
     if (!mounted) return;
 
+    // 🔹 User does NOT exist → treat as new user
     if (!snap.exists) {
-      // In case data not found, treat as new user
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeNewUser()),
+        MaterialPageRoute(
+          builder: (_) => const HomeNewUser(userName: "User"),
+        ),
       );
       return;
     }
 
+    // 🔹 Extract user data
     final data = snap.value as Map;
+    final String fullName = data["fullName"] ?? "User";
     final reminders = data["reminders"];
 
+    // 🔹 User exists but has no reminders → new user home
     if (reminders == null || reminders.isEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeNewUser()),
+        MaterialPageRoute(
+          builder: (_) => HomeNewUser(
+            userName: fullName,
+          ),
+        ),
       );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeExistingUser()),
-      );
+      return;
     }
+
+    // 🔹 Convert reminders Map → List<Map> (for NavWrapper)
+    final List<Map<String, dynamic>> reminderList = [];
+    if (reminders is Map) {
+      reminders.forEach((key, value) {
+        if (value is Map) {
+          reminderList.add({
+            "id": key,
+            "name": value["name"],
+            "time": value["time"],
+          });
+        }
+      });
+    }
+
+    // 🔹 Existing user with reminders → NavWrapper
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NavWrapper(
+          userName: fullName,
+          reminders: reminderList,
+        ),
+      ),
+    );
   }
 
   @override
