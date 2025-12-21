@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_doctor/screens/add_medicine_page.dart';
 
 class HomeExistingUser extends StatelessWidget {
   final String userName;
@@ -125,11 +126,38 @@ class HomeExistingUser extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // You probably have other buttons in your Figma like:
-              // “Check Symptoms”, “View all reminders”, etc.
-              // Add them here as needed.
+              const SizedBox(height: 20),
 
-              // Spacer to push content above bottom nav
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AddMedicinePage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E7AEB),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  child: const Text(
+                    "Add Medicine Timer",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+
               const Spacer(),
             ],
           ),

@@ -76,7 +76,15 @@ flutter:
   - assets/icons/Clock-button.png
   - assets/icons/Home-button.png
   - assets/icons/Profile-button.png
-  - assets/icons/Vector.png  
+  - assets/icons/Vector.png
+  - assets/icons/blue-Notification.png  
+  - assets/icons/blue-Profile.png
+  - assets/icons/Logout.png
+  - assets/icons/notifications.png
+  - assets/icons/setting.png
+  - assets/icons/profile-edit.png
+  - assets/icons/language.png
+  - assets/icons/tnc.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

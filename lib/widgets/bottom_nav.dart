@@ -1,77 +1,54 @@
 import 'package:flutter/material.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNav extends StatelessWidget {
   final int currentIndex;
-  final ValueChanged<int> onTap;
+  final Function(int) onTap;
 
-  const BottomNavBar({
+  const BottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
   });
 
+  Color _iconColor(int index) {
+    return currentIndex == index
+        ? const Color(0xFF3E7AEB) // active blue
+        : Colors.grey; // inactive
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 70,
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
-            offset: Offset(0, -2),
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _navItem(
-            index: 0,
-            currentIndex: currentIndex,
-            assetName: "assets/Home-button.png",
-            onTap: onTap,
-          ),
-          _navItem(
-            index: 1,
-            currentIndex: currentIndex,
-            assetName: "assets/Clock-button.png",
-            onTap: onTap,
-          ),
-          _navItem(
-            index: 2,
-            currentIndex: currentIndex,
-            assetName: "assets/Chat-button.png",
-            onTap: onTap,
-          ),
-          _navItem(
-            index: 3,
-            currentIndex: currentIndex,
-            assetName: "assets/Profile-button.png",
-            onTap: onTap,
-          ),
+          _navItem(0, "assets/icons/Home-button.png"),
+          _navItem(1, "assets/icons/Clock-button.png"),
+          _navItem(2, "assets/icons/Chat-button.png"),
+          _navItem(3, "assets/icons/Profile-button.png"),
         ],
       ),
     );
   }
 
-  Widget _navItem({
-    required int index,
-    required int currentIndex,
-    required String assetName,
-    required ValueChanged<int> onTap,
-  }) {
-    final bool isActive = index == currentIndex;
-
+  Widget _navItem(int index, String iconPath) {
     return GestureDetector(
       onTap: () => onTap(index),
-      child: Opacity(
-        opacity: isActive ? 1.0 : 0.4,
-        child: Image.asset(
-          assetName,
-          height: 28,
-        ),
+      child: Image.asset(
+        iconPath,
+        width: 26,
+        height: 26,
+        color: _iconColor(index),
       ),
     );
   }

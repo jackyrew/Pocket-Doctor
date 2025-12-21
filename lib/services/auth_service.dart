@@ -1,14 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final DatabaseReference _db = FirebaseDatabase.instanceFor(
-    app: Firebase.app("PocketDoctor"),
-    databaseURL:
-        "https://pocket-doctor-b5458-default-rtdb.asia-southeast1.firebasedatabase.app",
-  ).ref();
+  final DatabaseReference _db = FirebaseDatabase.instance.ref();
 
   // SIGN UP
   Future<String?> signUp({
@@ -26,16 +21,15 @@ class AuthService {
 
       String uid = userCred.user!.uid;
 
-      // save the user profile in realtime database
       await _db.child("users/$uid").set({
         "fullName": fullName,
         "age": age,
         "gender": gender,
         "email": email,
-        "reminders": {}, // <-- IMPORTANT: add empty reminders field
+        "reminders": {},
       });
 
-      return null; // success
+      return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -51,7 +45,7 @@ class AuthService {
         email: email,
         password: password,
       );
-      return null; // success
+      return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

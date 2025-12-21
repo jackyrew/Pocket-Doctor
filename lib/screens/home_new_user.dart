@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_doctor/screens/add_medicine_page.dart';
 
 class HomeNewUser extends StatelessWidget {
   final String userName; // pass "Abu" etc.
@@ -101,7 +102,7 @@ class HomeNewUser extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          //go to symptom checker
+                          // GO TO SYMPTOM CHECKER PAGE
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryBlue,
@@ -187,7 +188,12 @@ class HomeNewUser extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: TextButton(
                         onPressed: () {
-                          //go to add timer
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddMedicinePage(),
+                            ),
+                          );
                         },
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -225,38 +231,49 @@ class HomeNewUser extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     // BIG BLUE "Add a medicine timer" ROW
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primaryBlue,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'assets/icons/pills-image.png',
-                            height: 20,
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddMedicinePage(),
                           ),
-                          const SizedBox(width: 8),
-                          const Expanded(
-                            child: Text(
-                              'Add a medicine timer',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/icons/pills-image.png',
+                              height: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Add a medicine timer',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.add_circle_outline,
-                            color: Colors.white,
-                          ),
-                        ],
+                            const Icon(
+                              Icons.add_circle_outline,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -299,41 +316,8 @@ class HomeNewUser extends StatelessWidget {
                 ),
               ),
             ),
-
-            // BOTTOM NAV
-            const _BottomNavBar(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Image.asset('assets/icons/Home-button.png', height: 26),
-          Image.asset('assets/icons/Clock-button.png', height: 26),
-          Image.asset('assets/icons/Chat-button.png', height: 26),
-          Image.asset('assets/icons/Profile-button.png', height: 26),
-        ],
       ),
     );
   }
