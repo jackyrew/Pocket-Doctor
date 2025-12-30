@@ -52,7 +52,7 @@ class HomeExistingUser extends StatelessWidget {
       // skip past reminders
       if (reminderMinutes < nowMinutes) continue;
 
-      if (nearestMinutes == null || reminderMinutes < nearestMinutes!) {
+      if (nearestMinutes == null || reminderMinutes < nearestMinutes) {
         nearestMinutes = reminderMinutes;
         todayReminder = reminder;
       }
@@ -129,7 +129,7 @@ class HomeExistingUser extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // TODO: navigate to symptom checker
+                    Navigator.pushNamed(context, "/chatbot");
                   },
                   icon: Image.asset(
                     "assets/icons/Messages.png",
@@ -184,7 +184,7 @@ class HomeExistingUser extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      "Need a nudge? Let us remind you when it’s time to take your medicine.",
+                      "Need a nudge? Let us remind you when it's time to take your medicine.",
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14),
                     ),
@@ -233,7 +233,6 @@ class HomeExistingUser extends StatelessWidget {
               if (todayReminder != null)
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, "/medicine");
                     // or Navigator.push(...) if you prefer
                   },
                   child: Container(
