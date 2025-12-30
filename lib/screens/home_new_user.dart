@@ -102,7 +102,7 @@ class HomeNewUser extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // GO TO SYMPTOM CHECKER PAGE
+                          Navigator.pushNamed(context, '/chatbot');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryBlue,
