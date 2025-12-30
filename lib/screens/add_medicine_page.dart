@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 
 class AddMedicinePage extends StatefulWidget {
   const AddMedicinePage({super.key});
@@ -15,17 +16,70 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
 
   bool isLoading = false;
 
-  Future<void> _pickTime() async {
-    final TimeOfDay? time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+  Future<void> _pickTimeIOS() async {
+    TimeOfDay temp = selectedTime ?? TimeOfDay.now();
+    final now = DateTime.now();
 
-    if (time != null) {
-      setState(() {
-        selectedTime = time;
-      });
-    }
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // top bar like iPhone (Cancel / Save)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  const Text(
+                    "Edit Time",
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() => selectedTime = temp);
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Save"),
+                  ),
+                ],
+              ),
+
+              const Divider(height: 1),
+
+              SizedBox(
+                height: 220,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  use24hFormat: false,
+                  initialDateTime: DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    temp.hour,
+                    temp.minute,
+                  ),
+                  onDateTimeChanged: (dt) {
+                    temp = TimeOfDay(hour: dt.hour, minute: dt.minute);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _saveReminder() async {
@@ -59,6 +113,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
         "name": _nameController.text.trim(),
         "time": formattedTime,
         "taken": false,
+        "lastTakenDate": null,
         "createdAt": DateTime.now().millisecondsSinceEpoch,
       });
 
@@ -106,7 +161,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
             const SizedBox(height: 6),
 
             InkWell(
-              onTap: _pickTime,
+              onTap: _pickTimeIOS,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,

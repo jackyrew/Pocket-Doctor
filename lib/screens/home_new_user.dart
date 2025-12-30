@@ -154,65 +154,73 @@ class HomeNewUser extends StatelessWidget {
                     // CLOCK CARD
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 18,
+                      ),
                       decoration: BoxDecoration(
                         color: lightBlue,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Row(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // CLOCK ICON
                           Image.asset(
                             'assets/icons/clock.png',
-                            height: 64,
+                            height: 70,
                           ),
-                          const SizedBox(width: 16),
-                          const Expanded(
-                            child: Text(
-                              "Need a nudge? Let us\nremind you when it’s time\nto take your medicine.",
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF1F1F1F),
+
+                          const SizedBox(height: 12),
+
+                          // DESCRIPTION TEXT
+                          const Text(
+                            "Need a nudge? Let us remind you when it’s time to take your medicine.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF1F1F1F),
+                            ),
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          // CENTER BUTTON (INSIDE CARD)
+                          SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AddMedicinePage(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: const Color(
+                                  0xFF3E7AEB,
+                                ), // blue text
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: const Text(
+                                "Add Medicine Timer",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
                         ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // "Add Medicine Timer" small button inside card area
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AddMedicinePage(),
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: const BorderSide(color: primaryBlue),
-                          ),
-                        ),
-                        child: const Text(
-                          'Add Medicine Timer',
-                          style: TextStyle(
-                            color: primaryBlue,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
                       ),
                     ),
 
