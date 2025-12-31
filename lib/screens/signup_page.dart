@@ -82,7 +82,7 @@ class _SignupPageState extends State<SignupPage> {
 
               // GENDER DROPDOWN
               DropdownButtonFormField<String>(
-                value: gender,
+                initialValue: gender,
                 items: ["Male", "Female", "Other"]
                     .map(
                       (e) => DropdownMenuItem(
@@ -172,6 +172,8 @@ class _SignupPageState extends State<SignupPage> {
                       email: _email.text.trim(),
                       password: _password.text.trim(),
                     );
+
+                    if (!context.mounted) return;
 
                     if (error == null) {
                       Navigator.pushReplacement(

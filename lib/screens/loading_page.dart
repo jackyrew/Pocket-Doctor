@@ -14,6 +14,7 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
 
     Future.delayed(Duration(milliseconds: 800), () {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LogicPage()),

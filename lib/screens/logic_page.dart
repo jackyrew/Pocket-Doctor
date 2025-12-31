@@ -65,6 +65,7 @@ class _LogicPageState extends State<LogicPage> {
       context,
       MaterialPageRoute(
         builder: (_) => NavWrapper(
+          userId: uid,
           userName: fullName,
           email: email,
           reminders: reminderList,

@@ -117,6 +117,8 @@ class _LoginPageState extends State<LoginPage> {
                       password: _password.text.trim(),
                     );
 
+                    if (!context.mounted) return;
+
                     if (error == null) {
                       Navigator.pushReplacement(
                         context,

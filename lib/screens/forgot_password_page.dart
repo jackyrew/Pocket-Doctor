@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import 'package:pocket_doctor/screens/reset_email_sent_page.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -24,20 +23,25 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           // 🔥 RESET PASSWORD BUTTON
           ElevatedButton(
             onPressed: () async {
+              final currentContext = context; // ✅ capture context early
               final auth = AuthService();
+
               String? error = await auth.resetPassword(_email.text.trim());
+
+              if (!currentContext.mounted) return;
 
               if (error == null) {
                 Navigator.push(
-                  context,
+                  currentContext,
                   MaterialPageRoute(
-                    builder: (_) => const ResetEmailSentPage(),
+                    builder: (_) => const ForgotPasswordPage(),
                   ),
                 );
               } else {
                 setState(() => errorText = error);
               }
             },
+
             child: const Text("Submit"),
           ),
 

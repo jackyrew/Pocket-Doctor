@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_doctor/screens/add_medicine_page.dart';
+import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
 
 class HomeExistingUser extends StatelessWidget {
   final String userName;
@@ -191,15 +191,13 @@ class HomeExistingUser extends StatelessWidget {
                     const SizedBox(height: 10),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.push(
+                        onPressed: () {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AddMedicinePage(),
+                              builder: (_) => const AddEditMedicinePage(),
                             ),
                           );
-
-                          Navigator.pushReplacementNamed(context, "/logic");
                         },
 
                         style: ElevatedButton.styleFrom(

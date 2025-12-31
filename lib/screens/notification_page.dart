@@ -103,7 +103,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
                   Switch(
                     value: isEnabled,
-                    activeColor: const Color(0xFF3E7AEB),
+                    activeThumbColor: const Color(0xFF3E7AEB),
                     onChanged: _updateNotification,
                   ),
                 ],

@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'add_medicine_page.dart';
+import '../models/medicine_reminder.dart';
+import 'add_edit_medicine_page.dart';
 
-class MedicineTimerPage extends StatelessWidget {
+class MedicineTimerPage extends StatefulWidget {
   const MedicineTimerPage({super.key});
 
+  @override
+  State<MedicineTimerPage> createState() => _MedicineTimerPageState();
+}
+
+class _MedicineTimerPageState extends State<MedicineTimerPage> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -23,291 +29,206 @@ class MedicineTimerPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _header(context),
-            const SizedBox(height: 16),
-            _subtitle(),
-            const SizedBox(height: 16),
-            Expanded(child: _reminderList(db)),
 
-            const SizedBox(height: 12),
+            Expanded(
+              child: StreamBuilder<DatabaseEvent>(
+                stream: db.onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData ||
+                      snapshot.data!.snapshot.value == null) {
+                    return const Center(child: Text("No medicine timer yet"));
+                  }
+
+                  final data = Map<String, dynamic>.from(
+                    snapshot.data!.snapshot.value as Map,
+                  );
+
+                  final reminders = data.entries.map((e) {
+                    final value = Map<String, dynamic>.from(e.value);
+                    return MedicineReminder(
+                      id: e.key,
+                      name: value['name'],
+                      time: value['time'],
+                    );
+                  }).toList();
+
+                  // 🔹 STEP 1: split reminders into categories
+                  final overdueList = <MedicineReminder>[];
+                  final todayList = <MedicineReminder>[];
+                  final takenList = <MedicineReminder>[];
+
+                  for (final r in reminders) {
+                    final value = Map<String, dynamic>.from(data[r.id]);
+
+                    final takenToday = _isTakenToday(value['lastTakenDate']);
+                    final overdue = _isOverdue(r.time, takenToday);
+
+                    if (takenToday) {
+                      takenList.add(r);
+                    } else if (overdue) {
+                      overdueList.add(r);
+                    } else {
+                      todayList.add(r);
+                    }
+                  }
+
+                  if (reminders.isEmpty) {
+                    return _emptyState(context);
+                  }
+
+                  return ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                    children: [
+                      // 🔴 OVERDUE SECTION
+                      if (overdueList.isNotEmpty) ...[
+                        const Text(
+                          "Overdue activities",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "You missed a dose!",
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 12),
+
+                        ...overdueList.map((r) {
+                          return _medicineCard(
+                            name: r.name,
+                            time: r.time,
+                            takenToday: false,
+                            overdue: true,
+                            onEdit: () async {
+                              final updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      AddEditMedicinePage(reminder: r),
+                                ),
+                              );
+                              if (updated == true && mounted) setState(() {});
+                            },
+                            onTaken: () async {
+                              final today = DateTime.now()
+                                  .toIso8601String()
+                                  .split(
+                                    "T",
+                                  )[0];
+                              await db.child(r.id).update({
+                                "lastTakenDate": today,
+                              });
+                            },
+                          );
+                        }),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // 🔵 TODAY SECTION
+                      if (todayList.isNotEmpty) ...[
+                        const Text(
+                          "Today activities",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        ...todayList.map((r) {
+                          return _medicineCard(
+                            name: r.name,
+                            time: r.time,
+                            takenToday: false,
+                            overdue: false,
+                            onEdit: () async {
+                              final updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      AddEditMedicinePage(reminder: r),
+                                ),
+                              );
+                              if (updated == true && mounted) setState(() {});
+                            },
+                            onTaken: () async {
+                              final today = DateTime.now()
+                                  .toIso8601String()
+                                  .split(
+                                    "T",
+                                  )[0];
+                              await db.child(r.id).update({
+                                "lastTakenDate": today,
+                              });
+                            },
+                          );
+                        }),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // 🟢 TAKEN SECTION
+                      if (takenList.isNotEmpty) ...[
+                        const Text(
+                          "Taken today",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        ...takenList.map((r) {
+                          return _medicineCard(
+                            name: r.name,
+                            time: r.time,
+                            takenToday: true,
+                            overdue: false,
+                            onEdit: () async {
+                              final updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      AddEditMedicinePage(reminder: r),
+                                ),
+                              );
+                              if (updated == true && mounted) setState(() {});
+                            },
+                            onTaken: () {},
+                          );
+                        }),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
-
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: _addMedicineButton(context),
-        ),
-      ),
-    );
-  }
-
-  Widget _header(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Text("‹ Back", style: TextStyle(fontSize: 16)),
-          ),
-          const Spacer(),
-          const Text(
-            "Medicine Timer",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-          ),
-          const Spacer(flex: 2),
-        ],
-      ),
-    );
-  }
-
-  Widget _subtitle() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        "Set a reminder so we can help you",
-        style: TextStyle(fontSize: 14, color: Colors.black54),
-      ),
-    );
-  }
-
-  //list
-  Widget _reminderList(DatabaseReference db) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: StreamBuilder(
-        stream: db.onValue,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-            return const Center(child: Text("No medicine timer yet"));
-          }
-
-          final data = Map<String, dynamic>.from(
-            snapshot.data!.snapshot.value as Map,
-          );
-
-          return ListView(
-            children: data.entries.map((entry) {
-              final reminder = Map<String, dynamic>.from(entry.value);
-
-              final bool takenToday = _isTakenToday(reminder['lastTakenDate']);
-              final bool overdue = _isOverdue(reminder['time'], takenToday);
-
-              return _medicineCard(
-                name: reminder['name'],
-                time: reminder['time'],
-                takenToday: takenToday,
-                overdue: overdue,
-                onEdit: () {
-                  _showEditTimeSheet(
-                    context,
-                    entry.key,
-                    reminder['time'],
-                  );
-                },
-                onTaken: () async {
-                  final today = DateTime.now().toIso8601String().split("T")[0];
-
-                  await db.child(entry.key).update({
-                    "taken": true,
-                    "lastTakenDate": today,
-                  });
-                },
-              );
-            }).toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _addMedicineButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final added = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AddMedicinePage()),
+            MaterialPageRoute(
+              builder: (_) => const AddEditMedicinePage(),
+            ),
           );
+
+          if (added == true && mounted) {
+            setState(() {});
+          }
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3E7AEB),
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Row(
-            children: [
-              const SizedBox(width: 6),
-
-              // TEXT
-              const Text(
-                "Add Medicine Timer",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-
-              const Spacer(),
-
-              // BUTTON
-              Container(
-                width: 36, // circle size
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.add_alarm,
-                  size: 22,
-                  color: Color(0xFF3E7AEB),
-                ),
-              ),
-
-              const SizedBox(width: 4),
-            ],
-          ),
-        ),
+        child: const Icon(Icons.add),
       ),
     );
-  }
-
-  void _showEditTimeSheet(
-    BuildContext context,
-    String reminderId,
-    String oldTime,
-  ) {
-    TimeOfDay selected = _parseTime(oldTime);
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "Edit Time",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  InkWell(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: selected,
-                      );
-
-                      if (picked != null) {
-                        setState(() => selected = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(selected.format(context)),
-                          const Icon(Icons.access_time),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      child: const Text("Save"),
-                      onPressed: () async {
-                        final uid = FirebaseAuth.instance.currentUser!.uid;
-
-                        final db = FirebaseDatabase.instance.ref(
-                          "users/$uid/reminders/$reminderId",
-                        );
-
-                        final formatted =
-                            selected.hour.toString().padLeft(2, '0') +
-                            ":" +
-                            selected.minute.toString().padLeft(2, '0');
-
-                        await db.update({"time": formatted});
-
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showDeleteConfirm(context, reminderId);
-                    },
-                    child: const Text(
-                      "Delete Alarm",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  TimeOfDay _parseTime(String time) {
-    final parts = time.split(":");
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-  }
-
-  bool _isOverdue(String time, bool taken) {
-    if (taken) return false;
-
-    final now = TimeOfDay.now();
-    final reminder = _parseTime(time);
-
-    final nowMinutes = now.hour * 60 + now.minute;
-    final reminderMinutes = reminder.hour * 60 + reminder.minute;
-
-    return nowMinutes > reminderMinutes;
   }
 
   bool _isTakenToday(String? lastTakenDate) {
@@ -317,46 +238,131 @@ class MedicineTimerPage extends StatelessWidget {
     return lastTakenDate == today;
   }
 
-  void _showDeleteConfirm(BuildContext context, String reminderId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Delete Reminder"),
-          content: const Text(
-            "Are you sure you want to delete this medicine timer?",
+  bool _isOverdue(String time, bool takenToday) {
+    if (takenToday) return false;
+
+    final now = TimeOfDay.now();
+    final parts = time.split(":");
+
+    final reminderMinutes = int.parse(parts[0]) * 60 + int.parse(parts[1]);
+    final nowMinutes = now.hour * 60 + now.minute;
+
+    return reminderMinutes < nowMinutes;
+  }
+
+  Widget _header(BuildContext context) {
+    return Container(
+      height: 64, // 🔥 FIX: lock height
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Row(
+              children: const [
+                Icon(Icons.arrow_back_ios, size: 16),
+                SizedBox(width: 4),
+                Text(
+                  "Back",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () async {
-                final uid = FirebaseAuth.instance.currentUser!.uid;
+          ),
 
-                final db = FirebaseDatabase.instance.ref(
-                  "users/$uid/reminders/$reminderId",
-                );
+          const Spacer(),
 
-                await db.remove();
-
-                Navigator.pop(context);
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.red),
-              ),
+          const Text(
+            "Medicine Timer",
+            style: TextStyle(
+              fontSize: 18, // 🔥 slightly smaller, cleaner
+              fontWeight: FontWeight.w700,
             ),
-          ],
-        );
-      },
+          ),
+
+          const Spacer(),
+
+          const SizedBox(width: 40), // keeps title centered
+        ],
+      ),
     );
   }
 
-  /// BLUE CARD (matches your design)
+  Widget _emptyState(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Set a reminder so we can help you",
+            style: TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+          const SizedBox(height: 20),
+
+          _addMedicineButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _addMedicineButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          final added = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const AddEditMedicinePage(),
+            ),
+          );
+
+          if (added == true && mounted) {
+            setState(() {});
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF3E7AEB),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              "Add Medicine Timer",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 8),
+            Icon(Icons.add_circle_outline, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 🔵 BLUE CARD UI (keep this here)
   Widget _medicineCard({
     required String name,
     required String time,
@@ -365,8 +371,11 @@ class MedicineTimerPage extends StatelessWidget {
     required VoidCallback onEdit,
     required VoidCallback onTaken,
   }) {
-    final Color bgColor = overdue
-        ? const Color(0xFF3E7AEB)
+    // ✅ MOVE LOGIC HERE
+    final Color bgColor = takenToday
+        ? Colors.green
+        : overdue
+        ? Colors.red
         : const Color(0xFF3E7AEB);
 
     return Container(
@@ -379,15 +388,15 @@ class MedicineTimerPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// TOP ROW
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset(
-                "assets/icons/icon-medicine.png",
+                'assets/icons/icon-medicine.png',
+                width: 28,
                 height: 28,
-                color: Colors.white,
+                color: Colors.white, // keeps it white on blue/red/green
               ),
+
               const SizedBox(width: 12),
 
               Expanded(
@@ -423,27 +432,30 @@ class MedicineTimerPage extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          /// ACTION
-          if (!takenToday)
+          if (takenToday)
+            const Center(
+              child: Text(
+                "Taken today",
+                style: TextStyle(color: Colors.white70),
+              ),
+            )
+          else if (overdue)
+            Center(
+              child: TextButton(
+                onPressed: onTaken,
+                child: const Text(
+                  "Overdue – Mark as taken",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )
+          else
             Center(
               child: TextButton(
                 onPressed: onTaken,
                 child: const Text(
                   "Mark as taken",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            )
-          else
-            const Center(
-              child: Text(
-                "Taken today",
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 13,
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

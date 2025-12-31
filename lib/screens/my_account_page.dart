@@ -83,7 +83,13 @@ class MyAccountPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Text("Update Profile"),
+              child: const Text(
+                "Update Profile",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_doctor/screens/add_medicine_page.dart';
+import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
 
 class HomeNewUser extends StatelessWidget {
   final String userName; // pass "Abu" etc.
@@ -194,7 +194,7 @@ class HomeNewUser extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const AddMedicinePage(),
+                                    builder: (_) => const AddEditMedicinePage(),
                                   ),
                                 );
                               },
@@ -245,7 +245,7 @@ class HomeNewUser extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const AddMedicinePage(),
+                            builder: (_) => const AddEditMedicinePage(),
                           ),
                         );
                       },

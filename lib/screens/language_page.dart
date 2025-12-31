@@ -55,11 +55,7 @@ class _LanguagePageState extends State<LanguagePage> {
     return RadioListTile<String>(
       title: Text(value),
       value: value,
-      groupValue: selectedLanguage,
       activeColor: const Color(0xFF3E7AEB),
-      onChanged: (val) {
-        setState(() => selectedLanguage = val!);
-      },
     );
   }
 }
