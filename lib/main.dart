@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_doctor/signup.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    initialRoute: '/signup',
+    routes: {
+      '/signup': (context) => const SignUpPage(),
+      '/login': (context) => const LoginPage(), // Your login page file
+    },
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -95,6 +102,7 @@ class LoginPage extends StatelessWidget {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
+                  
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4285F4),
@@ -104,6 +112,7 @@ class LoginPage extends StatelessWidget {
                     elevation: 5,
                     shadowColor: Colors.blue.withOpacity(0.5),
                   ),
+                  
                   child: const Text(
                     'Sign In',
                     style: TextStyle(
