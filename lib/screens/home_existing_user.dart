@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class HomeExistingUser extends StatelessWidget {
   final String userName;
-  final List<Map<String, dynamic>> reminders;
 
   const HomeExistingUser({
     super.key,
     required this.userName,
-    required this.reminders,
   });
 
   String _formatTime(String time) {
@@ -26,38 +26,6 @@ class HomeExistingUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic>? todayReminder;
-
-    final today = DateTime.now().toIso8601String().split("T")[0];
-    final now = TimeOfDay.now();
-
-    int? nearestMinutes;
-
-    for (final reminder in reminders) {
-      final String time = reminder['time'];
-      final String? lastTakenDate = reminder['lastTakenDate'];
-
-      // skip if already taken today
-      if (lastTakenDate == today) continue;
-
-      final parts = time.split(":");
-      final reminderTime = TimeOfDay(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
-
-      final reminderMinutes = reminderTime.hour * 60 + reminderTime.minute;
-      final nowMinutes = now.hour * 60 + now.minute;
-
-      // skip past reminders
-      if (reminderMinutes < nowMinutes) continue;
-
-      if (nearestMinutes == null || reminderMinutes < nearestMinutes) {
-        nearestMinutes = reminderMinutes;
-        todayReminder = reminder;
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -228,35 +196,85 @@ class HomeExistingUser extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              if (todayReminder != null)
-                GestureDetector(
-                  onTap: () {
-                    // or Navigator.push(...) if you prefer
-                  },
-                  child: Container(
+              StreamBuilder<DatabaseEvent>(
+                stream: FirebaseDatabase.instance
+                    .ref(
+                      "users/${FirebaseAuth.instance.currentUser!.uid}/reminders",
+                    )
+                    .onValue,
+
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData ||
+                      snapshot.data!.snapshot.value == null) {
+                    return const Text(
+                      "No reminders for today.",
+                      style: TextStyle(color: Colors.black54),
+                    );
+                  }
+
+                  final data = Map<String, dynamic>.from(
+                    snapshot.data!.snapshot.value as Map,
+                  );
+
+                  Map<String, dynamic>? todayReminder;
+
+                  final today = DateTime.now().toIso8601String().split("T")[0];
+                  final now = TimeOfDay.now();
+                  int? nearestMinutes;
+
+                  for (final entry in data.entries) {
+                    final reminder = Map<String, dynamic>.from(entry.value);
+
+                    final String time = reminder['time'];
+                    final String? lastTakenDate = reminder['lastTakenDate'];
+
+                    if (lastTakenDate == today) continue;
+
+                    final parts = time.split(":");
+                    final reminderMinutes =
+                        int.parse(parts[0]) * 60 + int.parse(parts[1]);
+                    final nowMinutes = now.hour * 60 + now.minute;
+
+                    if (reminderMinutes < nowMinutes) continue;
+
+                    if (nearestMinutes == null ||
+                        reminderMinutes < nearestMinutes) {
+                      nearestMinutes = reminderMinutes;
+                      todayReminder = reminder;
+                    }
+                  }
+
+                  if (todayReminder == null) {
+                    return const Text(
+                      "No reminders for today.",
+                      style: TextStyle(color: Colors.black54),
+                    );
+                  }
+
+                  return Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                      vertical: 12,
+                      vertical: 14,
                       horizontal: 16,
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF3E7AEB),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Text(
-                      "${todayReminder['name']} today  |  ${_formatTime(todayReminder['time'])}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                    child: Center(
+                      child: Text(
+                        "${todayReminder['name']} today  |  ${_formatTime(todayReminder['time'])}",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              else
-                const Text(
-                  "No reminders for today.",
-                  style: TextStyle(color: Colors.black54),
-                ),
+                  );
+                },
+              ),
 
               const SizedBox(height: 24),
 
@@ -268,11 +286,25 @@ class HomeExistingUser extends StatelessWidget {
                   color: const Color(0xFFE9F3FF),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Text(
-                  "Tips of the day\n\n"
-                  "Take meds at the same time each day for best effect. "
-                  "Don’t skip your dose — set a reminder if needed.",
-                  style: TextStyle(fontSize: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Center(
+                      child: Text(
+                        "Tips of the day",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Take meds at the same time each day for best effect. "
+                      "Don’t skip your dose — set a reminder if needed.",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
                 ),
               ),
 

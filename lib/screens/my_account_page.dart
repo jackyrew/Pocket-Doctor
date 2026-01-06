@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class MyAccountPage extends StatelessWidget {
+class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key});
 
   @override
+  State<MyAccountPage> createState() => _MyAccountPageState();
+}
+
+class _MyAccountPageState extends State<MyAccountPage> {
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user?.displayName != null) {
+      final parts = user!.displayName!.split(" ");
+      _firstNameController.text = parts.first;
+      if (parts.length > 1) {
+        _lastNameController.text = parts.sublist(1).join(" ");
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -56,26 +81,49 @@ class MyAccountPage extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            const Text(
-              "Itunuoluwa Abidoye",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            Text(
+              user?.displayName ?? "User",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const Text(
-              "itunuoluwa@petra.africa",
-              style: TextStyle(color: Colors.black54),
+            Text(
+              user?.email ?? "",
+              style: const TextStyle(color: Colors.black54),
             ),
 
             const SizedBox(height: 30),
 
-            _inputField("First name"),
-            _inputField("Last name"),
+            _inputField("First name", controller: _firstNameController),
+            _inputField("Last name", controller: _lastNameController),
             _dropdownField("Select your gender"),
             _inputField("What is your date of birth?"),
 
             const SizedBox(height: 30),
 
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user == null) return;
+
+                final fullName =
+                    "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}";
+
+                await user.updateDisplayName(fullName);
+
+                // Optional: mirror to Realtime DB (good for FYP)
+                final uid = user.uid;
+                await FirebaseDatabase.instance
+                    .ref("users/$uid/profile")
+                    .update({"name": fullName});
+
+                if (!context.mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Profile updated successfully")),
+                );
+
+                Navigator.pop(context);
+              },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3E7AEB),
                 minimumSize: const Size(double.infinity, 48),
@@ -97,10 +145,11 @@ class MyAccountPage extends StatelessWidget {
     );
   }
 
-  Widget _inputField(String hint) {
+  Widget _inputField(String hint, {TextEditingController? controller}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
+        controller: controller,
         decoration: InputDecoration(
           hintText: hint,
           border: const UnderlineInputBorder(),

@@ -40,25 +40,11 @@ class _LogicPageState extends State<LogicPage> {
 
     String fullName = "User";
     String email = "";
-    List<Map<String, dynamic>> reminderList = [];
 
     if (snap.exists) {
       final data = snap.value as Map;
       fullName = data["fullName"] ?? "User";
       email = data["email"] ?? "";
-
-      final reminders = data["reminders"];
-      if (reminders is Map) {
-        reminders.forEach((key, value) {
-          if (value is Map) {
-            reminderList.add({
-              "id": key,
-              "name": value["name"],
-              "time": value["time"],
-            });
-          }
-        });
-      }
     }
 
     Navigator.pushReplacement(
@@ -68,7 +54,6 @@ class _LogicPageState extends State<LogicPage> {
           userId: uid,
           userName: fullName,
           email: email,
-          reminders: reminderList,
         ),
       ),
     );

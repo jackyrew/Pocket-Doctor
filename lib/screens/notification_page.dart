@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../main.dart'; // for flutterLocalNotificationsPlugin
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -18,7 +19,7 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
 
     db = FirebaseDatabase.instance.ref(
-      "users/${FirebaseAuth.instance.currentUser!.uid}",
+      "users/${FirebaseAuth.instance.currentUser!.uid}/settings",
     );
 
     _loadNotificationStatus();
@@ -26,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   // Load saved toggle state
   Future<void> _loadNotificationStatus() async {
-    final snap = await db.child("notificationEnabled").get();
+    final snap = await db.child("notificationsEnabled").get();
     if (snap.exists && snap.value is bool) {
       setState(() => isEnabled = snap.value as bool);
     }
@@ -35,7 +36,12 @@ class _NotificationPageState extends State<NotificationPage> {
   // Update toggle state
   Future<void> _updateNotification(bool value) async {
     setState(() => isEnabled = value);
-    await db.update({"notificationEnabled": value});
+    await db.update({"notificationsEnabled": value});
+
+    if (!value) {
+      // Cancel ALL scheduled notifications
+      await flutterLocalNotificationsPlugin.cancelAll();
+    }
   }
 
   @override

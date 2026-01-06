@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pocket_doctor/widgets/bottom_nav.dart';
 import 'package:pocket_doctor/screens/home_existing_user.dart';
-import 'package:pocket_doctor/screens/home_new_user.dart';
 import 'package:pocket_doctor/screens/profile_page.dart';
 import 'package:pocket_doctor/screens/medicine_timer_page.dart';
 import 'package:pocket_doctor/chat/screens/chatbot_screen.dart';
@@ -12,14 +11,12 @@ class NavWrapper extends StatefulWidget {
   final String userId;
   final String userName;
   final String email;
-  final List<Map<String, dynamic>> reminders;
 
   const NavWrapper({
     super.key,
     required this.userId,
     required this.userName,
     required this.email,
-    required this.reminders,
   });
 
   @override
@@ -36,21 +33,13 @@ class _NavWrapperState extends State<NavWrapper> {
     super.initState();
 
     _pages = [
-      widget.reminders.isEmpty
-          ? HomeNewUser(userName: widget.userName)
-          : HomeExistingUser(
-              userName: widget.userName,
-              reminders: widget.reminders,
-            ),
+      HomeExistingUser(userName: widget.userName),
       const MedicineTimerPage(),
       ChatbotScreen(
         userId: widget.userId,
         userName: widget.userName,
       ),
-      ProfilePage(
-        userName: widget.userName,
-        email: widget.email,
-      ),
+      const ProfilePage(),
     ];
   }
 

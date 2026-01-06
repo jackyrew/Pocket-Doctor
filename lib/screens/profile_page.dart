@@ -8,17 +8,14 @@ import 'help_support_page.dart';
 import "package:pocket_doctor/screens/welcome_page.dart";
 
 class ProfilePage extends StatelessWidget {
-  final String userName;
-  final String email;
-
-  const ProfilePage({
-    super.key,
-    required this.userName,
-    required this.email,
-  });
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final userName = user?.displayName ?? "User";
+    final email = user?.email ?? "";
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F8),
       body: SafeArea(
