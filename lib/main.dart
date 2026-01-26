@@ -7,6 +7,7 @@ import 'package:pocket_doctor/screens/welcome_page.dart';
 import 'package:pocket_doctor/screens/logic_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'services/medicine_notification_service.dart';
 
 // 🔔 GLOBAL NOTIFICATION PLUGIN
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -14,6 +15,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await MedicineNotificationService.init();
 
   // 🔥 Firebase
   await Firebase.initializeApp(

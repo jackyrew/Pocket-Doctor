@@ -3,9 +3,23 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // 🔥 CHANGE THIS TO YOUR LARAVEL API URL
-  static const String baseUrl = 'http://10.0.2.2:8000/api'; // Android emulator
+  static const String _androidEmulatorUrl = 'http://10.0.2.2:8000/api';
+  static const String _androidPhysicalUrl =
+      'http://172.20.10.3:8000/api'; //physical android
   // static const String baseUrl = 'http://localhost:8000/api'; // iOS simulator
   // static const String baseUrl = 'https://your-domain.com/api'; // Production
+  static const String _environment = 'android_emulator';
+
+  static String get baseUrl {
+    switch (_environment) {
+      case 'android_emulator':
+        return _androidEmulatorUrl;
+      case 'android_physical':
+        return _androidPhysicalUrl;
+      default:
+        return _androidEmulatorUrl;
+    }
+  }
 
   /// Send a chat message to Laravel backend
   Future<ChatResponse> sendMessage({
@@ -23,8 +37,8 @@ class ApiService {
             body: jsonEncode({
               'user_id': userId,
               'message': message,
-              if (age != null) 'age': age,
-              if (sex != null) 'sex': sex,
+              'age': 22,
+              'sex': 'male',
               if (sessionId != null) 'session_id': sessionId,
             }),
           )

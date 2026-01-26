@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+
 import 'nav_wrapper.dart';
 
 class LogicPage extends StatefulWidget {
@@ -11,13 +11,9 @@ class LogicPage extends StatefulWidget {
 }
 
 class _LogicPageState extends State<LogicPage> {
-  late final DatabaseReference db;
-
   @override
   void initState() {
     super.initState();
-
-    db = FirebaseDatabase.instance.ref();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUserStatus();
@@ -27,26 +23,21 @@ class _LogicPageState extends State<LogicPage> {
   Future<void> _checkUserStatus() async {
     final user = FirebaseAuth.instance.currentUser;
 
-    // 🔴 USER NOT LOGGED IN
+    // USER NOT LOGGED IN
     if (user == null) {
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, "/login");
       return;
     }
 
+    // Get user info from Firebase Auth
     final uid = user.uid;
-    final snap = await db.child("users/$uid").get();
+    final fullName = user.displayName ?? "User";
+    final email = user.email ?? "";
 
     if (!mounted) return;
 
-    String fullName = "User";
-    String email = "";
-
-    if (snap.exists) {
-      final data = snap.value as Map;
-      fullName = data["fullName"] ?? "User";
-      email = data["email"] ?? "";
-    }
-
+    // Navigate to app
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -62,7 +53,9 @@ class _LogicPageState extends State<LogicPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

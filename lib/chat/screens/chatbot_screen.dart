@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pocket_doctor/chat/widgets/message_bubble.dart';
 import 'package:pocket_doctor/models/chat_message.dart';
 import 'package:pocket_doctor/services/api_service.dart';
-import 'package:pocket_doctor/chat/widgets/demographics_dialog.dart';
+import 'package:pocket_doctor/services/auth_service.dart';
 
 class ChatbotScreen extends StatefulWidget {
   final String userId;
@@ -34,6 +34,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   @override
   void initState() {
     super.initState();
+    _loadUserData(); // Load user data first
     // Add welcome message
     _messages.add(
       ChatMessage(
@@ -43,6 +44,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         type: 'greeting',
       ),
     );
+  }
+
+  // Load user age and gender from Firebase
+  Future<void> _loadUserData() async {
+    try {
+      final authService = AuthService();
+      final userData = await authService.getUserData(widget.userId);
+
+      if (userData != null) {
+        setState(() {
+          _userAge = int.tryParse(userData['age'].toString());
+          // Convert "Male"/"Female"/"Other" to "male"/"female"/"other"
+          _userSex = userData['gender']?.toString().toLowerCase();
+        });
+        print("Loaded user data - Age: $_userAge, Sex: $_userSex");
+      }
+    } catch (e) {
+      print("Error loading user data: $e");
+    }
   }
 
   @override
@@ -84,45 +104,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       // Save session ID
       _sessionId = response.sessionId;
 
-      // Handle demographics request
-      if (response.needsDemographics && _userAge == null && _userSex == null) {
-        setState(() {
-          _messages.add(
-            ChatMessage(
-              text: response.reply,
-              isUser: false,
-              time: DateTime.now(),
-              type: 'need_demographics',
-            ),
-          );
-          _isBotTyping = false;
-        });
-        _scrollToBottom();
-
-        // Show demographics dialog
-        final demographics = await _showDemographicsDialog();
-        if (demographics != null) {
-          _userAge = demographics['age'];
-          _userSex = demographics['sex'];
-
-          // Auto-send demographics
-          await _sendMessage();
-        }
-      } else {
-        // Add bot response
-        setState(() {
-          _messages.add(
-            ChatMessage(
-              text: response.reply,
-              isUser: false,
-              time: DateTime.now(),
-              type: response.type,
-            ),
-          );
-          _isBotTyping = false;
-        });
-        _scrollToBottom();
-      }
+      // Add bot response
+      setState(() {
+        _messages.add(
+          ChatMessage(
+            text: response.reply,
+            isUser: false,
+            time: DateTime.now(),
+            type: response.type,
+          ),
+        );
+        _isBotTyping = false;
+      });
+      _scrollToBottom();
     } catch (e) {
       setState(() {
         _messages.add(
@@ -138,14 +132,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       });
       _scrollToBottom();
     }
-  }
-
-  Future<Map<String, dynamic>?> _showDemographicsDialog() async {
-    return showDialog<Map<String, dynamic>>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => DemographicsDialog(),
-    );
   }
 
   void _scrollToBottom() {
