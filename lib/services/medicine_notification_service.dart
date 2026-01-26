@@ -1,23 +1,38 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import '../main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class MedicineNotificationService {
-  /// Convert reminder ID (Firebase key) to stable int
-  static int notificationIdFromReminderId(String id) {
-    return id.hashCode & 0x7fffffff;
+  static final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
+
+  static bool _initialized = false;
+
+  static Future<void> init() async {
+    if (_initialized) return;
+
+    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const settings = InitializationSettings(android: android);
+
+    await _plugin.initialize(settings);
+    _initialized = true;
   }
 
-  /// Calculate next trigger time
-  static DateTime calculateNextTime({
-    required String time, // HH:mm
-  }) {
+  static int _idFromReminder(String id) => id.hashCode & 0x7fffffff;
+
+  static Future<void> schedule({
+    required String reminderId,
+    required String medicineName,
+    required String time,
+  }) async {
+    await init(); // 🔴 GUARANTEE init BEFORE anything
+
+    final id = _idFromReminder(reminderId);
     final now = DateTime.now();
     final parts = time.split(':');
 
-    DateTime scheduled = DateTime(
+    var date = DateTime(
       now.year,
       now.month,
       now.day,
@@ -25,57 +40,33 @@ class MedicineNotificationService {
       int.parse(parts[1]),
     );
 
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
+    if (date.isBefore(now)) {
+      date = date.add(const Duration(days: 1));
     }
 
-    return scheduled;
-  }
+    await _plugin.cancel(id);
 
-  /// Schedule daily medicine reminder
-  static Future<void> scheduleReminder({
-    required String reminderId,
-    required String medicineName,
-    required String time, // HH:mm
-  }) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
-
-    final snap = await FirebaseDatabase.instance
-        .ref("users/$uid/settings/notificationsEnabled")
-        .get();
-
-    if (snap.exists && snap.value == false) {
-      return; // notifications turned OFF
-    }
-
-    final int id = notificationIdFromReminderId(reminderId);
-    final DateTime scheduledTime = calculateNextTime(time: time);
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    await _plugin.zonedSchedule(
       id,
       'Pocket Doctor',
-      'It’s time to take your $medicineName',
-      tz.TZDateTime.from(scheduledTime, tz.local),
+      'Time to take $medicineName',
+      tz.TZDateTime.from(date, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'medicine_channel',
           'Medicine Reminders',
-          channelDescription: 'Medication reminder notifications',
           importance: Importance.max,
           priority: Priority.high,
+          playSound: true,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
-  /// Cancel reminder
-  static Future<void> cancelReminder(String reminderId) async {
-    final int id = notificationIdFromReminderId(reminderId);
-    await flutterLocalNotificationsPlugin.cancel(id);
+  static Future<void> cancel(String reminderId) async {
+    await init();
+    await _plugin.cancel(_idFromReminder(reminderId));
   }
 }

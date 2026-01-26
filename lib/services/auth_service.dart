@@ -68,4 +68,18 @@ class AuthService {
 
   // GET CURRENT USER
   User? get currentUser => _auth.currentUser;
+
+  // GET USER DATA (NEW METHOD)
+  Future<Map<String, dynamic>?> getUserData(String uid) async {
+    try {
+      final snapshot = await _db.child("users/$uid").get();
+      if (snapshot.exists) {
+        return Map<String, dynamic>.from(snapshot.value as Map);
+      }
+      return null;
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return null;
+    }
+  }
 }
