@@ -39,7 +39,6 @@ class SettingPage extends StatelessWidget {
               _settingTile(
                 icon: "assets/icons/tnc.png",
                 title: "Term of use",
-                subtitle: "Make changes to your account",
                 onTap: () {
                   Navigator.push(
                     context,
@@ -52,7 +51,6 @@ class SettingPage extends StatelessWidget {
               _settingTile(
                 icon: "assets/icons/language.png",
                 title: "Language",
-                subtitle: "Setting information",
                 onTap: () {
                   Navigator.push(
                     context,
@@ -70,7 +68,6 @@ class SettingPage extends StatelessWidget {
   Widget _settingTile({
     required String icon,
     required String title,
-    required String subtitle,
     required VoidCallback onTap,
   }) {
     return ListTile(
@@ -79,10 +76,7 @@ class SettingPage extends StatelessWidget {
         title,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 13, color: Colors.black54),
-      ),
+      
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
     );

@@ -1,335 +1,252 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
 
 class HomeNewUser extends StatelessWidget {
-  final String userName; // pass "Abu" etc.
+  final String userName;
 
   const HomeNewUser({
     super.key,
     required this.userName,
   });
 
+  String get _firstName => userName.split(' ').first;
+
   @override
   Widget build(BuildContext context) {
-    const primaryBlue = Color(0xFF3E7AEB); // #3E7AEB
-    const lightBlue = Color(0xFFE9F3FF); // #E9F3FF
+    const primaryBlue = Color(0xFF3E7AEB);
+    const lightBlue = Color(0xFFE9F3FF);
+    const textDark = Color(0xFF1F1F1F);
+    const textGray = Color(0xFF858585);
 
-    final firstName = userName.split(' ').first;
-
-    return Scaffold(
-      backgroundColor: Colors.white, // FFFFFF
-      body: SafeArea(
+    final bodyContent = SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // MAIN SCROLL AREA
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
+              // HEADER (POCKET DOCTOR LOGO + USER PROFILE IMAGE)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset('assets/icons/bear-logo.png', height: 36),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Pocket Doctor',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: textDark,
+                        ),
+                      ),
+                    ],
+                  ),
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundImage: const AssetImage(
+                      'assets/icons/User-image.png',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+
+              // GREETING THE USER (WITH HANDS EMOJI)
+              Row(
+                children: [
+                  Image.asset('assets/icons/hands-emoji.png', height: 22),
+                  const SizedBox(width: 8),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
-
-                      // TOP ROW: Logo + "Pocket Doctor" + user avatar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/icons/bear-logo.png',
-                                height: 32,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Pocket Doctor',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1F1F1F),
-                                ),
-                              ),
-                            ],
-                          ),
-                          CircleAvatar(
-                            radius: 18,
-                            backgroundImage: const AssetImage(
-                              'assets/icons/User-image.png',
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // GREETING "Hello, Abu"
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            'assets/icons/hands-emoji.png',
-                            height: 30,
-                          ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hello, $firstName',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF1F1F1F),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'How can I help you today?',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF858585),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // BIG "Check Symptoms" BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/chatbot');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 14,
-                              horizontal: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                'assets/icons/Messages.png',
-                                height: 22,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Check Symptoms',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // "Explore more" TITLE
-                      const Text(
-                        'Explore more',
-                        style: TextStyle(
-                          fontSize: 16,
+                      Text(
+                        "Hello, $_firstName",
+                        style: const TextStyle(
+                          fontSize: 26,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1F1F1F),
+                          color: textDark,
                         ),
                       ),
-
-                      const SizedBox(height: 12),
-
-                      // CLOCK CARD
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 18,
-                        ),
-                        decoration: BoxDecoration(
-                          color: lightBlue,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // CLOCK ICON
-                            Image.asset(
-                              'assets/icons/clock.png',
-                              height: 70,
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            // DESCRIPTION TEXT
-                            const Text(
-                              "Need a nudge? Let us remind you when it’s time to take your medicine.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF1F1F1F),
-                              ),
-                            ),
-
-                            const SizedBox(height: 14),
-
-                            // CENTER BUTTON (INSIDE CARD)
-                            SizedBox(
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AddEditMedicinePage(),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: const Color(
-                                    0xFF3E7AEB,
-                                  ), // blue text
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Add Medicine Timer",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // "Add a Reminder" TITLE
+                      const SizedBox(height: 4),
                       const Text(
-                        'Add a Reminder',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1F1F1F),
+                        'How can I help you today?',
+                        style: TextStyle(color: textGray),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // CHECK SYMPTOMS BUTTON
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/chatbot');
+                  },
+                  icon: Image.asset('assets/icons/Messages.png', height: 22),
+                  label: const Text(
+                    'Check Symptoms',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // EXPLORE MORE CARD
+              const Text(
+                'Explore more',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: lightBlue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/icons/clock.png', height: 70),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Need a nudge? Let us remind you when it's time to take your medicine.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: textDark),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddEditMedicinePage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: textDark,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
+                      child: const Text("Add Medicine Timer"),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
 
-                      const SizedBox(height: 12),
-
-                      // BIG BLUE "Add a medicine timer" ROW
-                      InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AddEditMedicinePage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: primaryBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'assets/icons/pills-image.png',
-                                height: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              const Expanded(
-                                child: Text(
-                                  'Add a medicine timer',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.add_circle_outline,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
+              // ADD REMINDER 
+              InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AddEditMedicinePage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryBlue,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset('assets/icons/pills-image.png', height: 20),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Add a medicine timer',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // "Tips of the day" CARD
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: lightBlue,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tips of the day',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1F1F1F),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              '• Take meds at the same time each day for best effect.\n'
-                              '• Don’t skip your dose — set a reminder if needed.',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF4A4A4A),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
+                      const Icon(Icons.add_circle_outline, color: Colors.white),
                     ],
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
+
+              // TIPS OF THE DAY CARD
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: lightBlue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tips of the day',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Take meds at the same time each day for best effect."
+                      " Don't skip your dose, set a reminder if needed.",
+                      style: TextStyle(fontSize: 14, color: textGray),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
+
+    if (Platform.isIOS) {
+      // IOS APPBAR
+      return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text(
+            "Home",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        child: bodyContent,
+      );
+    } else {
+      // ANDROID APPBAR
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: bodyContent,
+      );
+    }
   }
 }
