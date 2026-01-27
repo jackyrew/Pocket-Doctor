@@ -12,7 +12,11 @@ class HomeExistingUser extends StatelessWidget {
     required this.userName,
   });
 
-  String get _firstName => userName.split(' ').first;
+  String get _firstName { //get full name from database (ensure the update also being retrieved and display only the first name)
+  final name = FirebaseAuth.instance.currentUser?.displayName ?? "User";
+  return name.split(" ").first;
+}
+
 
   String _formatTime(String time) {
     final parts = time.split(":");
