@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'nav_wrapper.dart';
 
+// This page decides where to send the user depending on login status
 class LogicPage extends StatefulWidget {
   const LogicPage({super.key});
 
@@ -14,37 +15,38 @@ class _LogicPageState extends State<LogicPage> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkUserStatus();
+      checkUser(); // Check user login status after first frame
     });
   }
 
-  Future<void> _checkUserStatus() async {
-    final user = FirebaseAuth.instance.currentUser;
+  // Function to check if user is logged in
+  Future<void> checkUser() async {
+    User? currentUser = FirebaseAuth.instance.currentUser; // slightly longer name
 
-    // USER NOT LOGGED IN
-    if (user == null) {
+    // If user is not logged in
+    if (currentUser == null) {
       if (!mounted) return;
+      // Navigate to login page (maybe add animation later)
       Navigator.pushReplacementNamed(context, "/login");
       return;
     }
 
-    // Get user info from Firebase Auth
-    final uid = user.uid;
-    final fullName = user.displayName ?? "User";
-    final email = user.email ?? "";
+    // Grab some user info
+    String uid = currentUser.uid;
+    String displayName = currentUser.displayName ?? "User"; // fallback name
+    String userEmail = currentUser.email ?? "noemail@example.com"; // redundant default
 
     if (!mounted) return;
 
-    // Navigate to app
+    // Navigate to main app wrapper
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => NavWrapper(
+        builder: (ctx) => NavWrapper(
           userId: uid,
-          userName: fullName,
-          email: email,
+          userName: displayName,
+          email: userEmail,
         ),
       ),
     );
@@ -52,9 +54,12 @@ class _LogicPageState extends State<LogicPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    // Simple loading indicator while we check auth status
+    return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+        ),
       ),
     );
   }

@@ -18,7 +18,7 @@ class _LoadingPageState extends State<LoadingPage> {
     Future.delayed(const Duration(milliseconds: 800), () {
       if (!mounted) return;
 
-      // Navigate to LogicPage after delay
+      // Navigate to LogicPage after delay.
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
