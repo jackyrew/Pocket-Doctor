@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../main.dart'; // for flutterLocalNotificationsPlugin
+
+import '../services/medicine_notification_service.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -18,6 +19,7 @@ class _NotificationPageState extends State<NotificationPage> {
   void initState() {
     super.initState();
 
+    // reference to user settings in firebase
     db = FirebaseDatabase.instance.ref(
       "users/${FirebaseAuth.instance.currentUser!.uid}/settings",
     );
@@ -25,22 +27,28 @@ class _NotificationPageState extends State<NotificationPage> {
     _loadNotificationStatus();
   }
 
-  // Load saved toggle state
+  // load saved notification toggle value
   Future<void> _loadNotificationStatus() async {
     final snap = await db.child("notificationsEnabled").get();
+
     if (snap.exists && snap.value is bool) {
-      setState(() => isEnabled = snap.value as bool);
+      setState(() {
+        isEnabled = snap.value as bool;
+      });
     }
   }
 
-  // Update toggle state
+  // update toggle state in database
   Future<void> _updateNotification(bool value) async {
-    setState(() => isEnabled = value);
+    setState(() {
+      isEnabled = value;
+    });
+
     await db.update({"notificationsEnabled": value});
 
+    // if user turns off notification, cancel all reminders
     if (!value) {
-      // Cancel ALL scheduled notifications
-      await flutterLocalNotificationsPlugin.cancelAll();
+      await MedicineNotificationService.cancelAll();
     }
   }
 
@@ -81,7 +89,6 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             const SizedBox(height: 20),
 
-            // Notification Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -114,6 +121,12 @@ class _NotificationPageState extends State<NotificationPage> {
                   ),
                 ],
               ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                MedicineNotificationService.showTestNow();
+              },
+              child: const Text("TEST NOTIFICATION"),
             ),
           ],
         ),
