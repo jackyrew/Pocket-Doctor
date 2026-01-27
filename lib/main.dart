@@ -7,6 +7,7 @@ import 'package:pocket_doctor/screens/welcome_page.dart';
 import 'package:pocket_doctor/screens/logic_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'services/medicine_notification_service.dart';
 
 // 🔔 GLOBAL NOTIFICATION PLUGIN
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -14,6 +15,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await MedicineNotificationService.init();
 
   // 🔥 Firebase
   await Firebase.initializeApp(
@@ -59,6 +62,32 @@ class PocketDoctorApp extends StatelessWidget {
           userName: fakeUserName,
         ),
       },
+    );
+  }
+
+  // Helper method to create consistent TextFields
+  Widget _buildTextField({required String hint, bool isPassword = false}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: TextField(
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.grey),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Color(0xFF4285F4), width: 2),
+          ),
+        ),
+      ),
     );
   }
 }

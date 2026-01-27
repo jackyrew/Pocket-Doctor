@@ -81,7 +81,7 @@ class _AddEditMedicinePageState extends State<AddEditMedicinePage> {
         await ref.child(reminderId).update(data);
 
         // cancel old notification
-        await MedicineNotificationService.cancelReminder(reminderId);
+        await MedicineNotificationService.cancel(reminderId);
       } else {
         final newRef = ref.push();
         reminderId = newRef.key!;
@@ -92,7 +92,7 @@ class _AddEditMedicinePageState extends State<AddEditMedicinePage> {
       }
 
       // schedule new notification
-      await MedicineNotificationService.scheduleReminder(
+      await MedicineNotificationService.schedule(
         reminderId: reminderId,
         medicineName: _nameController.text.trim(),
         time: timeString,
@@ -147,7 +147,7 @@ class _AddEditMedicinePageState extends State<AddEditMedicinePage> {
       "users/$uid/reminders/${widget.reminder!.id}",
     );
 
-    await MedicineNotificationService.cancelReminder(widget.reminder!.id);
+    await MedicineNotificationService.cancel(widget.reminder!.id);
     await ref.remove();
 
     if (!mounted) return;

@@ -6,10 +6,17 @@ import 'package:firebase_database/firebase_database.dart';
 class HomeExistingUser extends StatelessWidget {
   final String userName;
 
+  
   const HomeExistingUser({
     super.key,
     required this.userName,
   });
+
+  String get _firstName { //get full name from database (ensure the update also being retrieved and display only the first name)
+  final name = FirebaseAuth.instance.currentUser?.displayName ?? "User";
+  return name.split(" ").first;
+}
+
 
   String _formatTime(String time) {
     final parts = time.split(":");
@@ -26,15 +33,20 @@ class HomeExistingUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    //initialize colors so that it is similar thorughout the page and good for optmization
+    const primaryBlue = Color(0xFF3E7AEB);
+    const lightBlue = Color(0xFFE9F3FF);
+    const textDark = Color(0xFF1F1F1F);
+    const textGray = Color(0xFF858585);
+
+    final bodyContent = SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// HEADER
+              // HEADER (POCKET DOCTOR LOGO + USER PROFILE IMAGE)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -50,11 +62,11 @@ class HomeExistingUser extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
+                          color: textDark,
                         ),
                       ),
                     ],
                   ),
-
                   CircleAvatar(
                     radius: 18,
                     backgroundImage: const AssetImage(
@@ -63,14 +75,13 @@ class HomeExistingUser extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 28),
 
-              /// GREETING (with hand emoji image)
+              // GREETING THE USER (WITH HANDS EMOJI)
               Row(
                 children: [
                   Text(
-                    "Hello, $userName ",
+                    "Hello, $_firstName ",
                     style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
@@ -82,17 +93,14 @@ class HomeExistingUser extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 4),
-
               const Text(
                 "How can I help you today?",
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(color: textGray),
               ),
-
               const SizedBox(height: 24),
 
-              /// CHECK SYMPTOMS BUTTON
+              // CHECK SYMPTOMS BUTTON
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -105,7 +113,7 @@ class HomeExistingUser extends StatelessWidget {
                   ),
                   label: const Text("Check Symptoms"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3E7AEB),
+                    backgroundColor: primaryBlue,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -118,26 +126,19 @@ class HomeExistingUser extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 28),
 
-              /// EXPLORE MORE
+              // EXPLORE MORE CARD
               const Text(
                 "Explore more",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
-
               const SizedBox(height: 12),
-
-              /// MEDICINE PROMO CARD
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE9F3FF),
+                  color: lightBlue,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -152,9 +153,10 @@ class HomeExistingUser extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      "Need a nudge? Let us remind you when it's time to take your medicine.",
+                      "Need a nudge? "
+                      "Let us remind you when it's time to take your medicine.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14, color: textDark),
                     ),
                     const SizedBox(height: 10),
                     Center(
@@ -167,10 +169,9 @@ class HomeExistingUser extends StatelessWidget {
                             ),
                           );
                         },
-
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          foregroundColor: textDark,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -182,18 +183,13 @@ class HomeExistingUser extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(height: 28),
 
-              /// TODAY’S REMINDER
+              // TODAY'S REMINDER
               const Text(
-                "Today’s Reminder",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                "Today's Reminder",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
-
               const SizedBox(height: 10),
 
               StreamBuilder<DatabaseEvent>(
@@ -202,13 +198,12 @@ class HomeExistingUser extends StatelessWidget {
                       "users/${FirebaseAuth.instance.currentUser!.uid}/reminders",
                     )
                     .onValue,
-
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
                       snapshot.data!.snapshot.value == null) {
                     return const Text(
                       "No reminders for today.",
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(color: textGray),
                     );
                   }
 
@@ -217,14 +212,12 @@ class HomeExistingUser extends StatelessWidget {
                   );
 
                   Map<String, dynamic>? todayReminder;
-
                   final today = DateTime.now().toIso8601String().split("T")[0];
                   final now = TimeOfDay.now();
                   int? nearestMinutes;
 
                   for (final entry in data.entries) {
                     final reminder = Map<String, dynamic>.from(entry.value);
-
                     final String time = reminder['time'];
                     final String? lastTakenDate = reminder['lastTakenDate'];
 
@@ -247,7 +240,7 @@ class HomeExistingUser extends StatelessWidget {
                   if (todayReminder == null) {
                     return const Text(
                       "No reminders for today.",
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(color: textGray),
                     );
                   }
 
@@ -258,7 +251,7 @@ class HomeExistingUser extends StatelessWidget {
                       horizontal: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3E7AEB),
+                      color: primaryBlue,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Center(
@@ -275,19 +268,18 @@ class HomeExistingUser extends StatelessWidget {
                   );
                 },
               ),
-
               const SizedBox(height: 24),
 
-              /// TIPS
+              // TIPS OF THE DAY CARD
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE9F3FF),
+                  color: lightBlue,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
                     Center(
                       child: Text(
@@ -300,19 +292,24 @@ class HomeExistingUser extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      "Take meds at the same time each day for best effect. "
-                      "Don’t skip your dose — set a reminder if needed.",
-                      style: TextStyle(fontSize: 14),
+                      "Take meds at the same time each day for best effect."
+                      " Don't skip your dose, set a reminder if needed.",
+                      style: TextStyle(fontSize: 14, color: textDark),
                     ),
                   ],
                 ),
               ),
-
-              const Spacer(),
             ],
           ),
         ),
       ),
     );
+
+      // ANDROID APPBAR 
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: bodyContent,
+      );
+    }
   }
-}
+
