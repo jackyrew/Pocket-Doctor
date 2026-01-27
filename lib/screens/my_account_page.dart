@@ -114,8 +114,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  // ---------------- UI HELPERS ----------------
-
+  
   Widget _buildAvatar() {
     return Stack(
       children: [
@@ -138,7 +137,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
       ],
     );
   }
-
+  
+  // TEXT FIELD FOR FIRST NAME AND LAST NAME
   Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -152,6 +152,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // GENDER FIELD
   Widget _buildGenderField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -168,6 +169,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // DATE OF BIRTH FIELD
   Widget _buildDateOfBirthField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -188,8 +190,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  // ---------------- ACTIONS ----------------
-
+  // SHOW GENDER PICKER
   void _showGenderPicker() {
     showModalBottomSheet(
       context: context,
@@ -208,6 +209,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // SELECT DATE OF BIRTH
   Future<void> _selectDateOfBirth() async {
     final picked = await showDatePicker(
       context: context,
@@ -221,6 +223,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
+  // profile will be updated to firebase only if the fields are filled
   Future<void> _updateProfile() async {
     if (_firstNameController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||
