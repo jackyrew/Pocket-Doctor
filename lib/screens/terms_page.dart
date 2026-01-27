@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TermsPage extends StatelessWidget {
@@ -8,21 +6,6 @@ class TermsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = "Terms & Condition";
-    // IOS STYLE APPBAR
-    if (Platform.isIOS) {
-      return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(title),
-          previousPageTitle: 'Back',
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: _termsContent(),
-          ),
-        ),
-      );
-    } else {
       // ANDROID STYLE APPBAR 
       return Scaffold(
         appBar: AppBar(
@@ -41,7 +24,7 @@ class TermsPage extends StatelessWidget {
         ),
       );
     }
-  }
+  
 
   Widget _termsContent() {
     return Column(

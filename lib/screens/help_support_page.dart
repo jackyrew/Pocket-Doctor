@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HelpSupportPage extends StatelessWidget {
@@ -7,7 +5,6 @@ class HelpSupportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //content of the page is the same for both platforms, thus just change the appbar
     final bodyContent = SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -78,19 +75,7 @@ class HelpSupportPage extends StatelessWidget {
       ),
     );
 
-    if (Platform.isIOS) {
-      // IOS APPBAR
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text(
-            "Help & Support",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          previousPageTitle: "Back",
-        ),
-        child: SafeArea(child: bodyContent),
-      );
-    } else {
+   
       // ANDROID APPBAR
       return Scaffold(
         backgroundColor: const Color(0xFFF5F6F8),
@@ -115,4 +100,3 @@ class HelpSupportPage extends StatelessWidget {
       );
     }
   }
-}

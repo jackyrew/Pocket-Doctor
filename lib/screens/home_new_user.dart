@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
 
@@ -230,18 +228,6 @@ class HomeNewUser extends StatelessWidget {
       ),
     );
 
-    if (Platform.isIOS) {
-      // IOS APPBAR
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text(
-            "Home",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        child: bodyContent,
-      );
-    } else {
       // ANDROID APPBAR
       return Scaffold(
         backgroundColor: Colors.white,
@@ -249,4 +235,4 @@ class HomeNewUser extends StatelessWidget {
       );
     }
   }
-}
+

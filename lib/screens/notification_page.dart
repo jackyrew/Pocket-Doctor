@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -61,19 +59,7 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
     );
 
-    if (Platform.isIOS) {
-      // IOS APPBAR
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text(
-            "Notification",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          previousPageTitle: "Back",
-        ),
-        child: SafeArea(child: bodyContent),
-      );
-    } else {
+    
       // ANDROID APPBAR
       return Scaffold(
         backgroundColor: const Color(0xFFF5F6F8),
@@ -97,7 +83,7 @@ class _NotificationPageState extends State<NotificationPage> {
         body: bodyContent,
       );
     }
-  }
+  
 
   // Notification Card Widget
   Widget _notificationCard() {
@@ -117,14 +103,7 @@ class _NotificationPageState extends State<NotificationPage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
-          Platform.isIOS
-          // IOS STYLE FOR SWITCH
-              ? CupertinoSwitch(
-                  value: isEnabled,
-                  activeColor: const Color(0xFF3E7AEB),
-                  onChanged: _updateNotification,
-                )
-              : Switch(
+           Switch(
                 // ANDROID STYLE FOR SWITCH
                   value: isEnabled,
                   activeThumbColor: const Color(0xFF3E7AEB),

@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_doctor/screens/add_edit_medicine_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 class HomeExistingUser extends StatelessWidget {
   final String userName;
 
+  
   const HomeExistingUser({
     super.key,
     required this.userName,
@@ -36,7 +35,6 @@ class HomeExistingUser extends StatelessWidget {
     const textDark = Color(0xFF1F1F1F);
     const textGray = Color(0xFF858585);
 
-    //content is the same for both platforms, thus just change the appbar
     final bodyContent = SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -303,18 +301,6 @@ class HomeExistingUser extends StatelessWidget {
       ),
     );
 
-    if (Platform.isIOS) {
-      // IOS APPBAR
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text(
-            "Home",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        child: bodyContent,
-      );
-    } else {
       // ANDROID APPBAR 
       return Scaffold(
         backgroundColor: Colors.white,
@@ -322,4 +308,4 @@ class HomeExistingUser extends StatelessWidget {
       );
     }
   }
-}
+

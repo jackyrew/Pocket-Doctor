@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LanguagePage extends StatefulWidget {
@@ -27,26 +25,6 @@ class _LanguagePageState extends State<LanguagePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
-      // IOS STYLE APPBAR
-      return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: const Text("Language"),
-          previousPageTitle: "Back",
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _cupertino("Malay"),
-                _cupertino("English"),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else {
       // ANDROID STYLE APPBAR
       return Scaffold(
         backgroundColor: const Color(0xFFF5F6F8),
@@ -85,7 +63,7 @@ class _LanguagePageState extends State<LanguagePage> {
         ),
       );
     }
-  }
+  
 
   // ANDROID RADIO TILE (CHOOSE LANGUAGE MALAY/ ENGLISH)
   Widget _material(String value) {
@@ -95,20 +73,6 @@ class _LanguagePageState extends State<LanguagePage> {
       groupValue: selectedLanguage,
       onChanged: _onLanguageChanged,
       activeColor: const Color(0xFF3E7AEB),
-    );
-  }
-
-  // IOS RADIO TILE (CHOOSE LANGUAGE MALAY / ENGLISH)
-  Widget _cupertino(String value) {
-    return CupertinoFormRow(
-      prefix: Text(value),
-      child: CupertinoSwitch(
-        value: selectedLanguage == value,
-        onChanged: (bool selected) {
-          if (selected) _onLanguageChanged(value);
-        },
-        activeColor: const Color(0xFF3E7AEB),
-      ),
     );
   }
 }

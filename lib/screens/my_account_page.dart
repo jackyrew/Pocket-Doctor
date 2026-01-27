@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,7 +20,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
   User? user;
 
   @override
-void initState() {
+  void initState() {
   super.initState();
   user = FirebaseAuth.instance.currentUser;
 
@@ -192,33 +190,6 @@ void initState() {
 
   void _showGenderPicker() {
     List<String> genders = ["Male", "Female"];
-
-    if (Platform.isIOS) {
-      // IOS (CUPERTINO STYLE PICKER (PICK GENDER))
-      showCupertinoModalPopup(
-        context: context,
-        builder: (_) => CupertinoActionSheet(
-          title: const Text("Select Gender"),
-          actions: genders
-              .map(
-                (g) => CupertinoActionSheetAction(
-                  onPressed: () {
-                    setState(() {
-                      selectedGender = g;
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Text(g),
-                ),
-              )
-              .toList(),
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-        ),
-      );
-    } else {
       // ANDROID (MATERIAL STYLE)
       showModalBottomSheet(
         context: context,
@@ -240,7 +211,7 @@ void initState() {
         ),
       );
     }
-  }
+  
 
   // DATE OF BIRTH FIELD
   Widget buildDateOfBirthField() {
@@ -262,41 +233,6 @@ void initState() {
   }
 
   void _selectDateOfBirth() async {
-    // IOS DATE PICKER
-    if (Platform.isIOS) {
-      DateTime tempDate = selectedDate ?? DateTime(2000, 1, 1);
-      showCupertinoModalPopup(
-        context: context,
-        builder: (_) => Container(
-          height: 300,
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 250,
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: tempDate,
-                  maximumDate: DateTime.now(),
-                  onDateTimeChanged: (DateTime newDate) {
-                    tempDate = newDate;
-                  },
-                ),
-              ),
-              CupertinoButton(
-                child: const Text("Done"),
-                onPressed: () {
-                  setState(() {
-                    selectedDate = tempDate;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
       // ANDROID DATE PICKER
       DateTime? picked = await showDatePicker(
         context: context,
@@ -310,7 +246,7 @@ void initState() {
         });
       }
     }
-  }
+  
 
   // UPDATE PROFILE BUTTON HANDLER
   void _updateProfile() async {

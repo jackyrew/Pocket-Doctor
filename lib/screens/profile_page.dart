@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'my_account_page.dart';
@@ -288,34 +286,7 @@ class ProfilePage extends StatelessWidget {
 
   // HANDLE THE LOGOUT PROCESS
   void _handleLogout(BuildContext context) {
-  if (Platform.isIOS) {
-    // IOS (cupertino dialog)
-    showCupertinoDialog(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        title: const Text("Log Out?"),
-        content: const Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: Text(
-            "Are you sure you want to log out? You won't receive reminder notifications while signed out.",
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text("Cancel"),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () =>
-                _performLogout(context, dialogContext),
-            child: const Text("Log Out"),
-          ),
-        ],
-      ),
-    );
-  } else {
-    // ANDROID & OTHERS (material dialog)
+    // ANDROID (material dialog)
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -414,7 +385,7 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-}
+
 
 
 
