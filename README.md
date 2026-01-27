@@ -126,17 +126,17 @@ Compatibility considerations:
 
 #### 4.2.1 Screen Navigation Flow 
 <p align="center">
-  <img src="assets/images/screen_navigation_flow.png" width="200" title="Pocket Doctor Logo">
+  <img src="assets/images/screen_navigation_flow.png" width="400" title="Pocket Doctor Logo">
 </p>
 
 #### 4.2.2 Sequence Diagram
 
 <p align="center">
-  <img src="assets/images/sequence_diagram.png" width="200" title="Pocket Doctor Logo">
+  <img src="assets/images/sequence_diagram.png" width="600" title="Pocket Doctor Logo">
 </p>
 
 ### 4.3 Gantt Chart
 <p align="center">
-  <img src="assets/images/Gantt_Chart.png" width="200" title="Pocket Doctor Logo">
+  <img src="assets/images/Gantt_Chart.png" width="800" title="Pocket Doctor Logo">
 </p>
 
