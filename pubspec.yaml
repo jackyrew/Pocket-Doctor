@@ -95,6 +95,9 @@ flutter:
   - assets/icons/tnc.png
   - assets/icons/icon-medicine.png
   - assets/images/pocket_doctor_logo.png
+  - assets/images/screen_navigation_flow.png
+  - assets/images/sequence_diagram.png
+  - assets/images/Gantt_Chart.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
