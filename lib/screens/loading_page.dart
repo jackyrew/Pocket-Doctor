@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'logic_page.dart';
 
+// Just a loading screen, with spinner
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
 
@@ -13,20 +14,29 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(milliseconds: 800), () {
+    // Small delay to simulate loading
+    Future.delayed(const Duration(milliseconds: 800), () {
       if (!mounted) return;
+
+      // Navigate to LogicPage after delay.
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LogicPage()),
+        MaterialPageRoute(
+          builder: (ctx) => const LogicPage(), 
+        ),
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        // Simple loading spinner
+        child: CircularProgressIndicator(
+          color: Colors.blueAccent, 
+          strokeWidth: 3.0,        
+        ),
       ),
     );
   }
