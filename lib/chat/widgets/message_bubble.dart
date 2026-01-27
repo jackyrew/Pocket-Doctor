@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_doctor/models/chat_message.dart';
 
+/// Message Bubble Widget
+///
+/// ACADEMIC CITATION:
+/// Enhanced with guidance from Claude AI (Anthropic, 2025) for improved
+/// diagnosis message styling and user experience.
+///
+/// Reference:
+/// Anthropic. (2025). Claude AI [Large Language Model]. https://www.anthropic.com
 class MessageBubble extends StatelessWidget {
   final ChatMessage message;
 
@@ -13,8 +21,10 @@ class MessageBubble extends StatelessWidget {
     final bubbleColor = isUser ? Colors.white : const Color(0xFFE3F2FD);
     final textColor = Colors.black87;
 
-    // Special styling for diagnosis messages
+    // Special styling for different message types
     final isDiagnosis = message.type == 'diagnosis';
+    final isError = message.type == 'error';
+    final isFollowUp = message.type == 'follow_up_question';
 
     return Align(
       alignment: alignment,
@@ -25,7 +35,9 @@ class MessageBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         decoration: BoxDecoration(
-          color: bubbleColor,
+          color: isError
+              ? const Color(0xFFFFEBEE) // Light red for errors
+              : bubbleColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: const [
             BoxShadow(
@@ -34,38 +46,19 @@ class MessageBubble extends StatelessWidget {
               offset: Offset(0, 1),
             ),
           ],
-          // Add border for diagnosis
+          // Special borders for special message types
           border: isDiagnosis
               ? Border.all(color: const Color(0xFF2962FF), width: 1.5)
+              : isError
+              ? Border.all(color: Colors.red.shade300, width: 1.5)
               : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Show icon for special message types
-            if (!isUser && isDiagnosis)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.medical_services_outlined,
-                      size: 18,
-                      color: const Color(0xFF2962FF),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Diagnosis Summary',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2962FF),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // Show icon and label for special message types
+            if (!isUser && (isDiagnosis || isError || isFollowUp))
+              _buildMessageTypeHeader(isDiagnosis, isError, isFollowUp),
 
             // Message text
             Text(
@@ -88,6 +81,55 @@ class MessageBubble extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMessageTypeHeader(
+    bool isDiagnosis,
+    bool isError,
+    bool isFollowUp,
+  ) {
+    IconData icon;
+    String label;
+    Color color;
+
+    if (isDiagnosis) {
+      icon = Icons.medical_services_outlined;
+      label = 'Diagnosis Summary';
+      color = const Color(0xFF2962FF);
+    } else if (isError) {
+      icon = Icons.error_outline;
+      label = 'Error';
+      color = Colors.red.shade700;
+    } else if (isFollowUp) {
+      icon = Icons.question_answer_outlined;
+      label = 'Follow-up Question';
+      color = const Color(0xFF2962FF);
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 18,
+            color: color,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
