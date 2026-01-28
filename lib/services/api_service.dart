@@ -16,14 +16,9 @@ class ApiService {
   static const String _androidEmulatorUrl = 'http://10.0.2.2:8000/api';
   static const String _androidPhysicalUrl =
       'http://172.20.10.3:8000/api'; //physical android
-  static const String _iOSSimulatorUrl =
-      'http://localhost:8000/api'; // iOS simulator
-  static const String _productionUrl =
-      'https://your-domain.com/api'; // Production
 
-  // 🎯 Change this based on your testing device
-  static const String _environment = 'android_emulator';
-  // Options: 'android_emulator', 'android_physical', 'ios_simulator', 'production'
+  //Set the environment here
+  static const String _environment = 'android_physical';
 
   static String get baseUrl {
     switch (_environment) {
@@ -31,10 +26,6 @@ class ApiService {
         return _androidEmulatorUrl;
       case 'android_physical':
         return _androidPhysicalUrl;
-      case 'ios_simulator':
-        return _iOSSimulatorUrl;
-      case 'production':
-        return _productionUrl;
       default:
         return _androidEmulatorUrl;
     }
@@ -61,8 +52,8 @@ class ApiService {
             body: jsonEncode({
               'user_id': userId,
               'message': message,
-              if (age != null) 'age': age, // 🔧 FIX: Use actual age parameter
-              if (sex != null) 'sex': sex, // 🔧 FIX: Use actual sex parameter
+              if (age != null) 'age': age, // Use actual age parameter
+              if (sex != null) 'sex': sex, // Use actual sex parameter
               if (sessionId != null) 'session_id': sessionId,
             }),
           )
@@ -72,7 +63,7 @@ class ApiService {
               throw Exception('Request timed out. Please try again.');
             },
           );
-
+      //Error handling based on status code, Reference by Claude AI.
       print('📥 Response status: ${response.statusCode}');
       print('📥 Response body: ${response.body}');
 
@@ -108,14 +99,14 @@ class ApiService {
   }
 }
 
-/// Response model from Laravel backend
+// Response model from Laravel backend
 class ChatResponse {
   final int sessionId;
   final String type;
   // Types: 'greeting', 'need_demographics', 'follow_up_question',
   //        'diagnosis', 'clarification', 'need_more_info', 'error'
   final String reply;
-  final List<ChatOption>? options; // 🆕 NEW: For displaying question options
+  final List<ChatOption>? options; // For displaying question options
   final Map<String, dynamic>? debug;
 
   ChatResponse({
@@ -155,7 +146,7 @@ class ChatResponse {
   bool get hasOptions => options != null && options!.isNotEmpty;
 }
 
-/// 🆕 NEW: Model for question options
+//Model for question options
 class ChatOption {
   final int index;
   final String label;
