@@ -126,7 +126,7 @@ Compatibility considerations:
 
 #### 4.2.1 Screen Navigation Flow 
 <p align="center">
-  <img src="assets/images/screen_navigation_flow.png" width="400" title="Pocket Doctor Logo">
+  <img src="assets/images/screen_navigation_flow.png" width="700" title="Pocket Doctor Logo">
 </p>
 
 #### 4.2.2 Sequence Diagram
@@ -137,6 +137,12 @@ Compatibility considerations:
 
 ### 4.3 Gantt Chart
 <p align="center">
-  <img src="assets/images/Gantt_Chart.png" width="800" title="Pocket Doctor Logo">
+  <img src="assets/images/Gantt_Chart.png" width="900" title="Pocket Doctor Logo">
 </p>
 
+## 5. References
+
+1. Google. (n.d.). Flutter documentation. Flutter. https://docs.flutter.dev/
+2. Google. (2026). Gemini (Jan 28 version) [Large language model]. https://gemini.google.com
+3. OpenAI. (2026). ChatGPT (Jan 28 version) [Large language model]. https://chat.openai.com
+4. Anthropic. (2026). Claude 3.5 [Large language model]. https://www.anthropic.com
