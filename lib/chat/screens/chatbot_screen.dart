@@ -39,14 +39,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   int? _userAge;
   String? _userSex;
 
-  // 🆕 NEW: Store current options for quick reply
+  // Store current options for quick reply
   List<ChatOption>? _currentOptions;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    // Add welcome message
+    // welcome message
     _messages.add(
       ChatMessage(
         text: "Hello! I'm Pocket Doctor. How can I help you today?",
@@ -69,10 +69,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           // Convert "Male"/"Female"/"Other" to "male"/"female"
           _userSex = userData['gender']?.toString().toLowerCase();
         });
-        print("✅ Loaded user data - Age: $_userAge, Sex: $_userSex");
+        print("Loaded user data - Age: $_userAge, Sex: $_userSex");
       }
     } catch (e) {
-      print("❌ Error loading user data: $e");
+      print("Error loading user data: $e");
     }
   }
 
@@ -97,14 +97,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     setState(() {
       _messages.add(userMsg);
       _isBotTyping = true;
-      _currentOptions = null; // Clear options when user sends message
+      _currentOptions =
+          null; // Clear options when user sends message, Reference by Claude AI.
     });
 
     _messageController.clear();
     _scrollToBottom();
 
     try {
-      // Call Laravel API
+      // Call Laravel API, Reference by Claude AI.
       final response = await _apiService.sendMessage(
         userId: widget.userId,
         message: text,
@@ -116,7 +117,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       // Save session ID
       _sessionId = response.sessionId;
 
-      // 🆕 NEW: Save options if present
+      //Save options if present, Reference by Claude AI.
       if (response.hasOptions) {
         _currentOptions = response.options;
       }
@@ -135,6 +136,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       });
       _scrollToBottom();
     } catch (e) {
+      // Handle errors, Reference by Claude AI.
       setState(() {
         _messages.add(
           ChatMessage(
@@ -175,7 +177,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           const SizedBox(height: 8),
           Expanded(child: _buildMessagesList()),
           if (_isBotTyping) _buildTypingIndicator(),
-          // 🆕 NEW: Quick reply options
+          // Quick reply options
           if (_currentOptions != null && _currentOptions!.isNotEmpty)
             _buildQuickReplyOptions(),
           _buildInputBar(context),
@@ -184,6 +186,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
+  // Some Widgets are Modified by Claude AI for better UX.
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
@@ -248,7 +251,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       color: const Color(0xFFF4F6F8),
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
       child: Text(
-        '⚠️ Disclaimer: Pocket Doctor provides general information only. Always consult a real doctor for medical advice.',
+        'Disclaimer: Pocket Doctor provides general information only. Always consult a real doctor for medical advice.',
         style: TextStyle(
           fontSize: 11,
           color: Colors.grey.shade700,
@@ -321,7 +324,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-  /// 🆕 NEW: Quick reply buttons for question options
+  ///  Quick reply buttons for question options, Feature added based on Claude AI's suggestion.
   Widget _buildQuickReplyOptions() {
     return Container(
       width: double.infinity,

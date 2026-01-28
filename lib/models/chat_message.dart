@@ -11,3 +11,5 @@ class ChatMessage {
     this.type,
   });
 }
+
+//Data Model for API response -> Flutter Ressponse

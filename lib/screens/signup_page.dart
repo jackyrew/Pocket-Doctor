@@ -4,6 +4,7 @@ import 'package:pocket_doctor/screens/login_page.dart';
 import 'package:pocket_doctor/screens/logic_page.dart';
 import '../theme/colors.dart';
 
+// Signup screen for Pocket Doctor
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
@@ -12,20 +13,20 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final TextEditingController _fullName = TextEditingController();
-  final TextEditingController _age = TextEditingController();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  // Controllers for the text fields
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  String gender = "Male";
-  bool _obscurePassword = true;
-
-  String? errorText;
+  String selectedGender = "Male"; // Default gender
+  bool _obscurePassword = true;   // Hide password by default
+  String? errorMessage;           // To display errors
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // White background
+      backgroundColor: Colors.white, // Background color, could change later
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
@@ -36,6 +37,7 @@ class _SignupPageState extends State<SignupPage> {
                 child: Image.asset(
                   "assets/icons/bear-logo.png",
                   height: 120,
+                  // Note: might want to tweak for different screen sizes
                 ),
               ),
 
@@ -59,9 +61,9 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 35),
 
-              // FULL NAME
+              // FULL NAME FIELD
               TextField(
-                controller: _fullName,
+                controller: fullNameController,
                 decoration: const InputDecoration(
                   labelText: "Full Name",
                 ),
@@ -69,9 +71,9 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 20),
 
-              // AGE
+              // AGE FIELD
               TextField(
-                controller: _age,
+                controller: ageController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: "Age",
@@ -82,17 +84,19 @@ class _SignupPageState extends State<SignupPage> {
 
               // GENDER DROPDOWN
               DropdownButtonFormField<String>(
-                initialValue: gender,
+                value: selectedGender,
                 items: ["Male", "Female", "Other"]
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e),
-                      ),
-                    )
+                    .map((g) => DropdownMenuItem(
+                          value: g,
+                          child: Text(g),
+                        ))
                     .toList(),
                 onChanged: (value) {
-                  gender = value!;
+                  if (value != null) {
+                    setState(() {
+                      selectedGender = value;
+                    });
+                  }
                 },
                 decoration: const InputDecoration(
                   labelText: "Gender",
@@ -101,9 +105,9 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 20),
 
-              // EMAIL
+              // EMAIL FIELD
               TextField(
-                controller: _email,
+                controller: emailController,
                 decoration: const InputDecoration(
                   labelText: "Email",
                 ),
@@ -111,9 +115,9 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 20),
 
-              // PASSWORD WITH TOGGLE
+              // PASSWORD FIELD WITH TOGGLE
               TextField(
-                controller: _password,
+                controller: passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
@@ -136,9 +140,9 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(height: 10),
 
               // ERROR MESSAGE
-              if (errorText != null)
+              if (errorMessage != null)
                 Text(
-                  errorText!,
+                  errorMessage!,
                   style: const TextStyle(color: Colors.red),
                 ),
 
@@ -156,32 +160,44 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                   onPressed: () async {
-                    if (_fullName.text.isEmpty ||
-                        _age.text.isEmpty ||
-                        _email.text.isEmpty ||
-                        _password.text.isEmpty) {
-                      setState(() => errorText = "Please fill all fields");
+                    // Check if all fields are filled
+                    if (fullNameController.text.isEmpty ||
+                        ageController.text.isEmpty ||
+                        emailController.text.isEmpty ||
+                        passwordController.text.isEmpty) {
+                      setState(() {
+                        errorMessage = "Please fill all fields";
+                      });
                       return;
                     }
 
-                    final auth = AuthService();
-                    String? error = await auth.signUp(
-                      fullName: _fullName.text.trim(),
-                      age: _age.text.trim(),
-                      gender: gender,
-                      email: _email.text.trim(),
-                      password: _password.text.trim(),
+                    // Instantiate AuthService
+                    final authService = AuthService();
+
+                    // Sign up call
+                    String? signUpError = await authService.signUp(
+                      fullName: fullNameController.text.trim(),
+                      age: ageController.text.trim(),
+                      gender: selectedGender,
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim(),
                     );
 
                     if (!context.mounted) return;
 
-                    if (error == null) {
+                    if (signUpError == null) {
+                      // Successful signup -> go to logic page
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const LogicPage()),
+                        MaterialPageRoute(
+                          builder: (_) => const LogicPage(),
+                        ),
                       );
                     } else {
-                      setState(() => errorText = error);
+                      // Display error returned from AuthService
+                      setState(() {
+                        errorMessage = signUpError;
+                      });
                     }
                   },
                   child: const Text(
@@ -202,7 +218,9 @@ class _SignupPageState extends State<SignupPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        MaterialPageRoute(
+                          builder: (_) => const LoginPage(),
+                        ),
                       );
                     },
                     child: Text(

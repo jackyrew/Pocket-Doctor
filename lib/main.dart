@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_doctor/chat/screens/chatbot_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:pocket_doctor/firebase_options.dart';
-import 'package:pocket_doctor/screens/login_page.dart';
-import 'package:pocket_doctor/screens/welcome_page.dart';
-import 'package:pocket_doctor/screens/logic_page.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'services/medicine_notification_service.dart';
 
-// 🔔 GLOBAL NOTIFICATION PLUGIN
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+import 'firebase_options.dart';
+import 'screens/welcome_page.dart';
+import 'screens/login_page.dart';
+import 'screens/logic_page.dart';
+import 'chat/screens/chatbot_screen.dart';
+
+import 'services/medicine_notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await MedicineNotificationService.init();
-
-  // 🔥 Firebase
+  // initialize firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 🔔 Init time zones
-  tz.initializeTimeZones();
-
-  // 🔔 Init notifications
-  const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const InitializationSettings initSettings = InitializationSettings(
-    android: androidSettings,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+  // initialize notification service (Android only)
+  await MedicineNotificationService.init();
 
   runApp(const PocketDoctorApp());
-} // ✅ THIS WAS MISSING
+}
 
 class PocketDoctorApp extends StatelessWidget {
   const PocketDoctorApp({super.key});
@@ -62,6 +46,32 @@ class PocketDoctorApp extends StatelessWidget {
           userName: fakeUserName,
         ),
       },
+    );
+  }
+
+  // Helper method to create consistent TextFields
+  Widget _buildTextField({required String hint, bool isPassword = false}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: TextField(
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.grey),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Color(0xFF4285F4), width: 2),
+          ),
+        ),
+      ),
     );
   }
 }

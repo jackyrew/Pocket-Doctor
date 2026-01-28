@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../main.dart'; // for flutterLocalNotificationsPlugin
+import '../services/medicine_notification_service.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -17,38 +17,56 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
-
+    // reference to user settings in firebase
     db = FirebaseDatabase.instance.ref(
       "users/${FirebaseAuth.instance.currentUser!.uid}/settings",
     );
-
     _loadNotificationStatus();
   }
 
-  // Load saved toggle state
   Future<void> _loadNotificationStatus() async {
     final snap = await db.child("notificationsEnabled").get();
+
     if (snap.exists && snap.value is bool) {
-      setState(() => isEnabled = snap.value as bool);
+      setState(() {
+        isEnabled = snap.value as bool;
+      });
     }
   }
 
-  // Update toggle state
   Future<void> _updateNotification(bool value) async {
-    setState(() => isEnabled = value);
+    setState(() {
+      isEnabled = value;
+    });
+
     await db.update({"notificationsEnabled": value});
 
+    // if user turns off notification, cancel all reminders
     if (!value) {
-      // Cancel ALL scheduled notifications
-      await flutterLocalNotificationsPlugin.cancelAll();
+      await MedicineNotificationService.cancelAll();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final bodyContent = Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Turn on Notification so we can notify you to take your medicine.",
+            style: TextStyle(fontSize: 15, color: Colors.black54),
+          ),
+          const SizedBox(height: 20),
+          _notificationCard(),
+        ],
+      ),
+    );
+
+    // ANDROID APPBAR
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F8),
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -66,58 +84,55 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ),
       ),
+      body: bodyContent,
+    );
+  }
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Turn on Notification so we can notify\nyou to take your medicine",
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.black54,
+  // Notification Card Widget
+  Widget _notificationCard() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Image.asset(
+                "assets/icons/notifications.png",
+                width: 26,
+                height: 26,
               ),
-            ),
-            const SizedBox(height: 20),
-
-            // Notification Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Text(
+                  "Notification",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/icons/notifications.png",
-                    width: 26,
-                    height: 26,
-                  ),
-                  const SizedBox(width: 14),
-
-                  const Expanded(
-                    child: Text(
-                      "Notification",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-
-                  Switch(
-                    value: isEnabled,
-                    activeThumbColor: const Color(0xFF3E7AEB),
-                    onChanged: _updateNotification,
-                  ),
-                ],
+              Switch(
+                value: isEnabled,
+                activeThumbColor: const Color(0xFF3E7AEB),
+                onChanged: _updateNotification,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+
+        const SizedBox(height: 16),
+
+        ElevatedButton(
+          onPressed: () {
+            MedicineNotificationService.showTestNow();
+          },
+          child: const Text("TEST NOTIFICATION"),
+        ),
+      ],
     );
   }
 }

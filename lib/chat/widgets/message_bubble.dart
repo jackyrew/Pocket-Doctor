@@ -21,7 +21,7 @@ class MessageBubble extends StatelessWidget {
     final bubbleColor = isUser ? Colors.white : const Color(0xFFE3F2FD);
     final textColor = Colors.black87;
 
-    // Special styling for different message types
+    // Separate styling for different message types
     final isDiagnosis = message.type == 'diagnosis';
     final isError = message.type == 'error';
     final isFollowUp = message.type == 'follow_up_question';
@@ -134,6 +134,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
+  // Feature added based on Claude AI's suggestion.
   String _formatTime(DateTime time) {
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');

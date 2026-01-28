@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:pocket_doctor/theme/colors.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key});
@@ -13,119 +14,90 @@ class _MyAccountPageState extends State<MyAccountPage> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
+  String? _gender;
+  DateTime? _dateOfBirth;
+
+  late final User _user;
+
   @override
   void initState() {
     super.initState();
-    final user = FirebaseAuth.instance.currentUser;
+    _user = FirebaseAuth.instance.currentUser!;
+    _loadName();
+    _loadProfileData();
+  }
 
-    if (user?.displayName != null) {
-      final parts = user!.displayName!.split(" ");
-      _firstNameController.text = parts.first;
-      if (parts.length > 1) {
-        _lastNameController.text = parts.sublist(1).join(" ");
-      }
+  void _loadName() {
+    final name = _user.displayName;
+    if (name == null) return;
+
+    final parts = name.split(" ");
+    _firstNameController.text = parts.first;
+    if (parts.length > 1) {
+      _lastNameController.text = parts.sublist(1).join(" ");
     }
+  }
+
+  void _loadProfileData() async {
+    final snapshot = await FirebaseDatabase.instance
+        .ref("users/${_user.uid}/profile")
+        .get();
+
+    final data = snapshot.value as Map?;
+    if (data == null) return;
+
+    setState(() {
+      _gender = data['gender'];
+      if (data['dob'] != null) {
+        _dateOfBirth = DateTime.tryParse(data['dob']);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    const primaryBlue = Color(0xFF3E7AEB);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "My Account",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Avatar
-            Stack(
-              children: [
-                const CircleAvatar(
-                  radius: 45,
-                  backgroundImage: AssetImage("assets/icons/User-image.png"),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3E7AEB),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.edit,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            Text(
-              user?.displayName ?? "User",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            Text(
-              user?.email ?? "",
-              style: const TextStyle(color: Colors.black54),
-            ),
-
+            _buildAvatar(),
             const SizedBox(height: 30),
 
-            _inputField("First name", controller: _firstNameController),
-            _inputField("Last name", controller: _lastNameController),
-            _dropdownField("Select your gender"),
-            _inputField("What is your date of birth?"),
+            _buildTextField("First name", _firstNameController),
+            _buildTextField("Last name", _lastNameController),
+            _buildGenderField(),
+            _buildDateOfBirthField(),
 
             const SizedBox(height: 30),
 
             ElevatedButton(
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                if (user == null) return;
-
-                final fullName =
-                    "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}";
-
-                await user.updateDisplayName(fullName);
-
-                // Optional: mirror to Realtime DB (good for FYP)
-                final uid = user.uid;
-                await FirebaseDatabase.instance
-                    .ref("users/$uid/profile")
-                    .update({"name": fullName});
-
-                if (!context.mounted) return;
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Profile updated successfully")),
-                );
-
-                Navigator.pop(context);
-              },
-
+              onPressed: _updateProfile,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3E7AEB),
+                backgroundColor: primaryBlue,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -133,10 +105,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ),
               child: const Text(
                 "Update Profile",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -145,30 +114,145 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  Widget _inputField(String hint, {TextEditingController? controller}) {
+  
+  Widget _buildAvatar() {
+    return Stack(
+      children: [
+        const CircleAvatar(
+          radius: 45,
+          backgroundImage: AssetImage("assets/icons/User-image.png"),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: const BoxDecoration(
+              color: primaryBlue,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.edit, size: 16, color: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  // TEXT FIELD FOR FIRST NAME AND LAST NAME
+  Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          hintText: hint,
+          hintText: label,
           border: const UnderlineInputBorder(),
         ),
       ),
     );
   }
 
-  Widget _dropdownField(String hint) {
+  // GENDER FIELD
+  Widget _buildGenderField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField(
-        decoration: InputDecoration(
-          hintText: hint,
-          border: const UnderlineInputBorder(),
+      child: InkWell(
+        onTap: _showGenderPicker,
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            hintText: "Select your gender",
+            border: UnderlineInputBorder(),
+          ),
+          child: Text(_gender ?? "Select your gender"),
         ),
-        items: const [],
-        onChanged: (_) {},
       ),
     );
+  }
+
+  // DATE OF BIRTH FIELD
+  Widget _buildDateOfBirthField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: _selectDateOfBirth,
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            hintText: "Date of Birth",
+            border: UnderlineInputBorder(),
+          ),
+          child: Text(
+            _dateOfBirth != null
+                ? "${_dateOfBirth!.day}/${_dateOfBirth!.month}/${_dateOfBirth!.year}"
+                : "Select your date of birth",
+          ),
+        ),
+      ),
+    );
+  }
+
+  // SHOW GENDER PICKER
+  void _showGenderPicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: ["Male", "Female"].map((gender) {
+          return ListTile(
+            title: Text(gender),
+            onTap: () {
+              setState(() => _gender = gender);
+              Navigator.pop(context);
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // SELECT DATE OF BIRTH
+  Future<void> _selectDateOfBirth() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dateOfBirth ?? DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      setState(() => _dateOfBirth = picked);
+    }
+  }
+
+  // profile will be updated to firebase only if the fields are filled
+  Future<void> _updateProfile() async {
+    if (_firstNameController.text.trim().isEmpty ||
+        _lastNameController.text.trim().isEmpty ||
+        _gender == null ||
+        _dateOfBirth == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all fields")),
+      ); return;
+      
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profile updated successfully")),
+      );Navigator.pop(context);
+    }
+
+    final fullName =
+        "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}";
+
+    await _user.updateDisplayName(fullName);
+
+    await FirebaseDatabase.instance
+        .ref("users/${_user.uid}/profile")
+        .update({
+      "name": fullName,
+      "gender": _gender,
+      "dob": _dateOfBirth!.toIso8601String(),
+    });
+
+    if (!mounted) return;
+    Navigator.pop(context, true);
   }
 }
