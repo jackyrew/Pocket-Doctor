@@ -9,7 +9,7 @@ Group Name: United
 
 | No. | Name                     | Matric No.  | Role in Project                      |
 |-----|--------------------------|-------------|--------------------------------------|
-| 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX |
+| 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX, Chatbot Module|
 | 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX, Backend Integration, Medicine Reminder Module |         |
 | 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 |Home and Profile Module |
 | 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Login Module  |
