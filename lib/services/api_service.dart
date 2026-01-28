@@ -18,7 +18,7 @@ class ApiService {
       'http://172.20.10.3:8000/api'; //physical android
 
   //Set the environment here
-  static const String _environment = 'android_emulator';
+  static const String _environment = 'android_physical';
 
   static String get baseUrl {
     switch (_environment) {
