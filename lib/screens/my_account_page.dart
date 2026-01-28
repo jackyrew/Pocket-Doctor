@@ -27,6 +27,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     _loadProfileData();
   }
 
+  // load name and profile data from firebase, referenced by Chatgpt, 27/1/2026 4:29PM
   void _loadName() {
     final name = _user.displayName;
     if (name == null) return;
@@ -190,7 +191,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  // SHOW GENDER PICKER
+  // SHOW GENDER PICKER, referenced by Chatgpt, 26/1/2026 2:11AM
   void _showGenderPicker() {
     showModalBottomSheet(
       context: context,
@@ -209,7 +210,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  // SELECT DATE OF BIRTH
+  // SELECT DATE OF BIRTH, referenced by Chatgpt, 26/1/2026 2:11AM
   Future<void> _selectDateOfBirth() async {
     final picked = await showDatePicker(
       context: context,
@@ -224,6 +225,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
   }
 
   // profile will be updated to firebase only if the fields are filled
+  // the data saved to the database, referenced by Chatgpt, 27/1/2026 4:29PM
   Future<void> _updateProfile() async {
     if (_firstNameController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||

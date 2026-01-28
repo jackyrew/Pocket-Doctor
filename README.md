@@ -11,7 +11,7 @@ Group Name: United
 |-----|--------------------------|-------------|--------------------------------------|
 | 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX, Chatbot Module|
 | 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX, Backend Integration, Medicine Reminder Module |         |
-| 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 |Home and Profile Module |
+| 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 |Home and Profile Module (home_existing_user, home_new_user, profile_page, my_account_page, setting_page, notification_page, help_support_page, terms_page, language_page) |
 | 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Login Module  |
 
 ## 2. Project Initiation & Ideation
@@ -142,7 +142,26 @@ Compatibility considerations:
 
 ## 5. References
 
-1. Google. (n.d.). Flutter documentation. Flutter. https://docs.flutter.dev/
+1. Anthropic. (2026). Claude 3.5 [Large language model]. https://www.anthropic.com
+(Used for implementing the if-else statement to check for existing reminders for the current date).
+
 2. Google. (2026). Gemini (Jan 28 version) [Large language model]. https://gemini.google.com
-3. OpenAI. (2026). ChatGPT (Jan 28 version) [Large language model]. https://chat.openai.com
-4. Anthropic. (2026). Claude 3.5 [Large language model]. https://www.anthropic.com
+(Used for UI performance optimization by defining and setting consistent color constants across the application).
+
+3. OpenAI. (2026, January 27). ChatGPT [Large language model]. https://chat.openai.com
+(Used for the technical implementation of loading user display names and profile data from the Firebase database).
+
+4. OpenAI. (2026, January 26). ChatGPT [Large language model]. https://chat.openai.com
+(Used for the development of the _showGenderPicker logic using a modal bottom sheet).
+
+5. OpenAI. (2026, January 26). ChatGPT [Large language model]. https://chat.openai.com
+(Used for the development of the _selectDateOfBirth method using the Flutter showDatePicker interactive dialog).
+
+6. OpenAI. (2026, January 27). ChatGPT [Large language model]. https://chat.openai.com
+(Used for implementing the data synchronization logic to save and persist profile updates to the Firebase Realtime Database).
+
+7. Google. (2026). Gemini (Jan 28 version) [Large language model]. https://gemini.google.com
+(Used for code optimization through the implementation of modular builder methods for UI components).
+
+8. OpenAI. (2026, January 27). ChatGPT [Large language model]. https://chat.openai.com
+(Used for the development of the secure _performLogout function and session termination logic).

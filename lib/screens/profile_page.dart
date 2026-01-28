@@ -42,6 +42,7 @@ class ProfilePage extends StatelessWidget {
   }
 
   // PROFILE PAGE TITLE
+  // optimization of using builder method, referenced by Gemini
   Widget _buildPageTitle() {
     return const Text(
       "Profile",
@@ -389,7 +390,7 @@ class ProfilePage extends StatelessWidget {
 
 
 
-  // PERFORM THE ACTUAL LOGOUT
+  // PERFORM THE ACTUAL LOGOUT, referenced by Chatgpt, 27/1/2026 1:42AM
   Future<void> _performLogout(
     BuildContext mainContext,
     BuildContext dialogContext,

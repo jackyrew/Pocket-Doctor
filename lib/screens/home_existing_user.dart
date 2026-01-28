@@ -13,11 +13,11 @@ class HomeExistingUser extends StatelessWidget {
   });
 
   String get _firstName { //get full name from database (ensure the update also being retrieved and display only the first name)
-  final name = FirebaseAuth.instance.currentUser?.displayName ?? "User";
+  final name = FirebaseAuth.instance.currentUser?.displayName ?? "User"; // will always update the name if changed in My Account Page, referenced by Chatgpt, 27/1/2026 4:29PM
   return name.split(" ").first;
 }
 
-
+  // Helper method to format time from "HH:MM" to "HH:MM AM/PM", referenced by Claude AI
   String _formatTime(String time) {
     final parts = time.split(":");
     if (parts.length != 2) return time;
@@ -34,6 +34,7 @@ class HomeExistingUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //initialize colors so that it is similar thorughout the page and good for optmization
+    // optimization by set the color, suggestions by AI, referenced by Gemini
     const primaryBlue = Color(0xFF3E7AEB);
     const lightBlue = Color(0xFFE9F3FF);
     const textDark = Color(0xFF1F1F1F);
@@ -192,6 +193,7 @@ class HomeExistingUser extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
+            // if else statement to check if there is any reminder for today, referenced by Claude AI
               StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
                     .ref(

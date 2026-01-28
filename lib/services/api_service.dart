@@ -40,7 +40,7 @@ class ApiService {
     int? sessionId,
   }) async {
     try {
-      print('📤 Sending message to: $baseUrl/chat');
+      print(' Sending message to: $baseUrl/chat');
       print('   User: $userId');
       print('   Message: $message');
       print('   Session: $sessionId');
