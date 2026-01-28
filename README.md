@@ -12,7 +12,7 @@ Group Name: United
 | 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX, Chatbot Module|
 | 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX, Backend Integration, Medicine Reminder Module |         |
 | 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 |Home and Profile Module (home_existing_user, home_new_user, profile_page, my_account_page, setting_page, notification_page, help_support_page, terms_page, language_page) |
-| 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Login Module  |
+| 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Login Module  | ( login_page, signup_page, welcome_page, logic_page, loading_page) |
 
 ## 2. Project Initiation & Ideation
 
@@ -47,9 +47,14 @@ The main objectives of **PocketDoctor** are:
 
 ### 2.5 Preferred Platform
 
-- **Mobile Platform:** Android (Flutter)  
-- **Framework:** Flutter (Dart)  
-- **Back End as a Service (BaaS):** Firebase(for authentication & storage)
+**Mobile Platform:** Android (Flutter)  
+PocketDoctor will be created as an Android mobile based application since the Android smartphones are popular among students and the general population. Application development using Android will guarantee increased accessibility and easy rollout to the target consumers.
+
+**Framework:** Flutter (Dart)
+The app will be developed based on Flutter, a cross-platform user interface platform that uses Dart programming language. Flutter is selected due to being fast to develop, uniform interface, and smooth across Android devices and screen sizes. Its architectural format by virtue of being a widget also assists in designing a clean, user intuitive and responsive user interface, which is vital in health related apps.
+
+**Back End as a Service (BaaS):** Firebase(for authentication & storage)
+In case of backend services, Firebase (Backend as a Service -BaaS) will be used. Firebase offers vital functions like user authentication, data storage in a cloud database and a secure data manipulation that do not necessitate the administration of a dedicated server. This will be appropriate when doing student projects and can be expanded to further improvements.
 
 ### 2.6 Key Features & Functionalities
 
