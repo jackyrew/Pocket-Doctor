@@ -10,7 +10,7 @@ Group Name: United
 | No. | Name                     | Matric No.  | Role in Project                      |
 |-----|--------------------------|-------------|--------------------------------------|
 | 1   | MUHAMMAD AFIQ HAMIZAN BIN HAMDAN | 2218411 | Group Leader, Backend Integration, UI/UX, Chatbot Module (ChatController.php, ChatMessage.php, ChatSession.php, ChatSessionState.php, OpenAIService.php, chatbot_screen.dart, message_bubble.dart, chat_message.dart, api_service.dart)|
-| 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX, Backend Integration, Medicine Reminder Module |         |
+| 2   | MUHAMMAD IMRAN BIN MUHAMMAD ALI | 2214599 | UI/UX, Backend Integration, Medicine Reminder Module (add_Edit_medicine_page.dart, medicine_timer_page.dart, medicine_notification_service.dart, medicine_reminder.dart, colors.dart, time_picker.dart, nav_wrapper.dart)
 | 3   | MUHAMMAD ANAZ NAZREE BIN SAHIDIN | 2215777 |Home and Profile Module (home_existing_user, home_new_user, profile_page, my_account_page, setting_page, notification_page, help_support_page, terms_page, language_page) |
 | 4   | MOHAMMAD SAIFUL EZLAN BIN SALAMAT | 2221095 | Login Module ( login_page, signup_page, welcome_page, logic_page, loading_page) |
 
@@ -170,3 +170,12 @@ Compatibility considerations:
 
 8. OpenAI. (2026, January 27). ChatGPT [Large language model]. https://chat.openai.com
 (Used for the development of the secure _performLogout function and session termination logic).
+
+9. Flutter Plugins. (2024). flutter_local_notifications. https://pub.dev/packages/flutter_local_notifications
+(Used for scheduling, canceling, and testing local notifications when a medicine reminder is added or edited.)
+
+10. OpenAI. (2026, January 27). ChatGPT [Large language model]. https://chat.openai.com
+(Used as a development assistant for Add/Edit Medicine logic, handling safe notification scheduling with try–catch blocks.)
+
+11. Android Developers. (2025). Android notification scheduling behavior. https://developer.android.com/develop/ui/views/notifications
+(Used to understand system-level notification behavior, including delayed or cached notifications after cancellation.)
